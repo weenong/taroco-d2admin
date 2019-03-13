@@ -5,9 +5,9 @@
       <el-dropdown-item @click.native="logOff">
         <d2-icon name="power-off" class="d2-mr-5" /> 注销
       </el-dropdown-item>
-      <el-dropdown-item @click.native="resetDb">
+      <!-- <el-dropdown-item @click.native="resetDb">
         <i class="el-icon-refresh"></i> 初始化
-      </el-dropdown-item>
+      </el-dropdown-item> -->
     </el-dropdown-menu>
   </el-dropdown>
 </template>

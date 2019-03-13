@@ -84,7 +84,7 @@ export default {
       // 表单
       formLogin: {
         username: "admin",
-        password: "123",
+        password: "123456",
         code: "v9am"
       },
       // 校验
@@ -136,6 +136,7 @@ export default {
             username: this.formLogin.username,
             password: this.formLogin.password
           });
+          console.log('login success')
         } else {
           // 登录表单校验失败
           this.$message.error("表单校验失败");

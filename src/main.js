@@ -6,15 +6,22 @@ import App from './App'
 // store
 import store from '@/store/index'
 // 模拟数据
-import '@/mock'
+// import '@/mock'
 // 多国语
 import i18n from './i18n'
 // 核心插件
 import d2Admin from '@/plugin/d2admin'
 // 路由
 import router from './router'
+// 全局filter
+import * as filters from './filters'
 // 核心插件
 Vue.use(d2Admin, { store })
+
+// 全局filter
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key])
+})
 
 new Vue({
   router,
@@ -25,6 +32,7 @@ new Vue({
 
   },
   mounted() {
+    console.log('main mounted')
     // 展示系统信息
     this.$store.commit('d2admin/releases/versionShow')
     // 用户登录后从数据库加载一系列的设置

@@ -21,7 +21,8 @@ import routerMapComponents from '@/routerMapComponents'
 //模拟动态菜单与路由
 //import { permissionMenu, permissionRouter } from '@/mock/permissionMenuAndRouter'
 
-import * as userService from "@/api/sys/user";
+import { GetMenu } from '@/api/menu'
+import { getUserInfo } from '@/api/login'
 
 Vue.use(VueRouter)
 
@@ -42,15 +43,15 @@ let permission = {
 let isFetchPermissionInfo = false
 
 let fetchPermissionInfo = async () => {
-  //处理动态添加的路由
-  const formatRoutes = function (routes) {
-    routes.forEach(route => {
-      route.component = routerMapComponents[route.component]
-      if (route.children) {
-        formatRoutes(route.children)
-      }
-    })
-  }
+  // 处理动态添加的路由
+  // const formatRoutes = function (routes) {
+  //   routes.forEach(route => {
+  //     route.component = routerMapComponents[route.component]
+  //     if (route.children) {
+  //       formatRoutes(route.children)
+  //     }
+  //   })
+  // }
 
   // const formatRoutesByComponentPath = function (routes) {
   //   routes.forEach(route => {
@@ -72,21 +73,25 @@ let fetchPermissionInfo = async () => {
   //   })
   // }
   try {
-    let userPermissionInfo = await userService.getUserPermissionInfo()
-    permissionMenu = userPermissionInfo.accessMenus
-    permissionRouter = userPermissionInfo.accessRoutes
-    permission.functions = userPermissionInfo.userPermissions
-    permission.roles = userPermissionInfo.userRoles
-    permission.interfaces = util.formatInterfaces(userPermissionInfo.accessInterfaces)
-    permission.isAdmin = userPermissionInfo.isAdmin == 1
+    let userInfo = await getUserInfo()
+    userInfo = userInfo.result
+    let aMenus = await GetMenu() // await userService.getUserPermissionInfo()
+    permissionRouter = util.formatRoutes(aMenus)
+    permissionMenu = util.formatMenus(aMenus)
+    console.log(permissionRouter)
+    console.log(permissionMenu)
+    permission.functions = userInfo.permissions
+    permission.roles = userInfo.roles
+    // permission.interfaces = util.formatInterfaces(userPermissionInfo.accessInterfaces)
+    permission.isAdmin = false // userPermissionInfo.isAdmin == 1
   } catch (ex) {
     console.log(ex)
   }
-  formatRoutes(permissionRouter)
+  // formatRoutes(permissionRouter)
   let allMenuAside = [...menuAside, ...permissionMenu]
   let allMenuHeader = [...menuHeader, ...permissionMenu]
-  //动态添加路由
-  router.addRoutes(permissionRouter);
+  // 动态添加路由
+  router.addRoutes(permissionRouter)
   // 处理路由 得到每一级的路由设置
   store.commit('d2admin/page/init', [...frameInRoutes, ...permissionRouter])
   // 设置顶栏菜单
@@ -101,7 +106,7 @@ let fetchPermissionInfo = async () => {
   store.dispatch('d2admin/page/openedLoad')
   await Promise.resolve()
 }
-//免校验token白名单
+// 免校验token白名单
 let whiteList = ['/login']
 
 /**
@@ -118,14 +123,15 @@ router.beforeEach(async (to, from, next) => {
     // 请根据自身业务需要修改
     const token = util.cookies.get('token')
     if (token && token !== 'undefined') {
-      //拉取权限信息
+      // 拉取权限信息
       if (!isFetchPermissionInfo) {
-        await fetchPermissionInfo();
-        isFetchPermissionInfo = true;
+        await fetchPermissionInfo()
+        isFetchPermissionInfo = true
         next(to.path, true)
       } else {
         next()
       }
+      // next()
     } else {
       // 将当前预计打开的页面完整地址临时存储 登录后继续跳转
       // 这个 cookie(redirect) 会在登录后自动删除

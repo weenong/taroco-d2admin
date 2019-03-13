@@ -47,7 +47,7 @@ service.interceptors.request.use(
     // 在请求发送之前做一些处理
     if (!(/^https:\/\/|http:\/\//.test(config.url))) {
       const token = util.cookies.get('token')
-      if (token && token !== 'undefined') {
+      if (!config.headers['Authorization'] && token && token !== 'undefined') {
         // 让每个请求携带token-- ['Authorization']为自定义key 请根据实际情况自行修改
         config.headers['Authorization'] = 'Bearer ' + token
       }
@@ -65,17 +65,17 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     loading.hide(response.config)
-    const res = response.data;
-    if (res.statusCode !== 200) {
+    const res = response.data
+    if (response.status !== 200) {
       Message({
         message: res.msg,
         type: 'error',
         duration: 3 * 1000
       })
-      return Promise.reject(res.msg);
+      return Promise.reject(res.msg)
     } else {
       message(response.config)
-      return res.data;
+      return res
     }
   },
   error => {
@@ -83,7 +83,7 @@ service.interceptors.response.use(
     loading.hide(error.config)
     if (error.response && error.response.status === 401) {
       util.cookies.remove()
-      if (error.config.url.indexOf("logout") === -1) {
+      if (error.config.url.indexOf('logout') === -1) {
         Message({
           message: '登陆信息已过期,请重新登陆!',
           type: 'error',
@@ -92,17 +92,32 @@ service.interceptors.response.use(
       }
       setTimeout(() => {
         router.push({
-          name: "login"
-        });
+          name: 'login'
+        })
+      }, 1000)
+    } else if (error.response && error.response.status === 429) {
+      util.cookies.remove()
+      Message({
+        message: '网络限流!',
+        type: 'error',
+        duration: 3 * 1000
+      })
+      setTimeout(() => {
+        router.push({
+          name: 'login'
+        })
       }, 1000)
     } else if (error.response && error.response.status === 500) {
       errorLog(new Error(`系统错误!: ${error.config.url}`))
-    } else if (error.message && error.message.indexOf("timeout") > -1) {
+    } else if (error.message && error.message.indexOf('timeout') > -1) {
       errorLog(new Error(`网络超时!: ${error.config.url}`))
-    } else if (error.type === "403") {
+    } else if (error.type === '403') {
       errorLog(new Error(`没有请求权限!: ${error.config.url}`))
     } else {
       errorLog(new Error(`网络错误!: ${error.config.url}`))
+      // router.push({
+      //   name: 'login'
+      // })
     }
     return Promise.reject(error)
   }

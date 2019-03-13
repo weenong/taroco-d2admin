@@ -1,5 +1,6 @@
 import log from './util.log.js'
 import cookies from './util.cookies.js'
+import { validatenull } from './validate'
 import { parse } from 'matchit'
 
 let util = {
@@ -38,6 +39,77 @@ util.formatInterfaces = function (interfaces) {
   i["PUT"] = interfaces.filter(s => s.method.toUpperCase() === "PUT").map(s => parse(s.path))
   i["DELETE"] = interfaces.filter(s => s.method.toUpperCase() === "DELETE").map(s => parse(s.path))
   return i
+}
+
+util.formatMenus = function (aMenu, parentPath) {
+  if (validatenull(aMenu)) {
+    return []
+  }
+  const menus = []
+  aMenu.forEach(oMenu => {
+    const {
+      path,
+      name,
+      icon,
+      children
+    } = oMenu
+    const menu = {
+      path: parentPath ? parentPath + '/' + path : path,
+      title: name,
+      icon: icon
+    }
+    if (children && children.length > 0) {
+      menu.children = validatenull(children) ? [] : util.formatMenus(children, path)
+    }
+    menus.push(menu)
+  })
+  return menus
+}
+
+/**
+ * 通过用户菜单生成路由信息
+ *
+ * @param {用户菜单} aMenu
+ */
+util.formatRoutes = function (aMenu, parentPath) {
+  if (validatenull(aMenu)) {
+    return []
+  }
+  const aRouter = []
+  aMenu.forEach(oMenu => {
+    const {
+      path,
+      component,
+      name,
+      children
+    } = oMenu
+
+    if (!validatenull(component)) {
+      const oRouter = {
+        path: parentPath ? parentPath + '/' + path : path,
+        component(resolve) {
+          let componentPath = ''
+          if (component === 'Layout') {
+            require(['@/layout/header-aside'], resolve)
+            return
+          } else {
+            componentPath = component
+          }
+          require([`@/${componentPath}.vue`], resolve)
+        },
+        name: name,
+        meta: {
+          cache: true,
+          title: name
+        }
+      }
+      if (!validatenull(children)) {
+        oRouter.children = util.formatRoutes(children, path)
+      }
+      aRouter.push(oRouter)
+    }
+  })
+  return aRouter
 }
 
 export default util
