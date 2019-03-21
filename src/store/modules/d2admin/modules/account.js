@@ -69,6 +69,7 @@ export default {
           // 删除cookie
           util.cookies.remove('token')
           util.cookies.remove('uuid')
+          vm.$store.commit('d2admin/menu/isFetchPermissionInfo', false)
           // 跳转路由
           vm.$router.push({
             name: 'login'

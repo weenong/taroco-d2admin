@@ -8,63 +8,67 @@
         <el-button size="mini" type="primary" v-if="menuManager_btn_del" icon="el-icon-delete" @click="handleDelete">删 除</el-button>
       </el-button-group>
     </template>
-    <el-row>
+    <el-row style="height:100%;">
       <el-col :span="8">
-        <el-tree
-          class="filter-tree"
-          node-key="id"
-          highlight-current
-          :data="treeData"
-          :default-expanded-keys="aExpandedKeys"
-          :filter-node-method="filterNode"
-          :props="defaultProps"
-          @node-click="getNodeData"
-          @node-expand="nodeExpand"
-          @node-collapse="nodeCollapse"
-        >
-        </el-tree>
+        <el-scrollbar wrap-style="color: red;" view-style="font-weight: bold;" view-class="view-box" :native="false">
+          <el-tree
+            class="filter-tree"
+            node-key="id"
+            highlight-current
+            :data="treeData"
+            :default-expanded-keys="aExpandedKeys"
+            :filter-node-method="filterNode"
+            :props="defaultProps"
+            @node-click="getNodeData"
+            @node-expand="nodeExpand"
+            @node-collapse="nodeCollapse"
+          >
+          </el-tree>
+        </el-scrollbar>
       </el-col>
       <el-col :span="16">
-        <el-form :label-position="labelPosition" label-width="80px" :model="form" ref="form">
-          <el-form-item label="父级节点" prop="parentId">
-            <el-input v-model="form.parentId" :disabled="true" placeholder="请输入父级节点"></el-input>
-          </el-form-item>
-          <el-form-item label="节点ID" prop="menuId">
-            <el-input v-model="form.menuId" :disabled="true" placeholder=""></el-input>
-          </el-form-item>
-          <el-form-item label="标题" prop="name">
-            <el-input v-model="form.name" :disabled="formEdit"  placeholder="请输入标题"></el-input>
-          </el-form-item>
-          <el-form-item label="权限标识" prop="permission">
-            <el-input v-model="form.permission" :disabled="formEdit" placeholder="请输入权限标识"></el-input>
-          </el-form-item>
-          <el-form-item label="图标" prop="icon">
-            <!-- <el-input v-model="form.icon" :disabled="formEdit" placeholder="请输入图标"></el-input> -->
-            <d2-icon-select v-model="form.icon" placeholder="请选择图标"></d2-icon-select>
-          </el-form-item>
-          <el-form-item label="资源路径" prop="url">
-            <el-input v-model="form.url" :disabled="formEdit" placeholder="请输入资源路径"></el-input>
-          </el-form-item>
-          <el-form-item label="请求方法" prop="method">
-            <el-select class="filter-item" v-model="form.method"  :disabled="formEdit"  placeholder="请输入资源请求类型">
-              <el-option v-for="item in  methodOptions" :key="item" :label="item" :value="item"> </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="类型" prop="type">
-            <el-select class="filter-item" v-model="form.type"  :disabled="formEdit"  placeholder="请输入资源请求类型">
-              <el-option v-for="item in typeOptions" :key="item" :label="item | typeFilter" :value="item"> </el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="排序" prop="sort">
-            <el-input v-model="form.sort" :disabled="formEdit" placeholder="请输入排序"></el-input>
-          </el-form-item>
-          <el-form-item label="前端组件"   prop="component">
-            <el-input v-model="form.component" :disabled="formEdit" placeholder="请输入描述"></el-input>
-          </el-form-item>
-          <el-form-item label="前端地址"   prop="component">
-            <el-input v-model="form.path" :disabled="formEdit" placeholder="iframe嵌套地址"></el-input>
-          </el-form-item>
-        </el-form>
+        <el-scrollbar wrap-style="color: red;" view-style="font-weight: bold;" view-class="view-box" :native="false">
+          <el-form :label-position="labelPosition" label-width="80px" :model="form" ref="form">
+            <el-form-item label="父级节点" prop="parentId">
+              <el-input v-model="form.parentId" :disabled="true" placeholder="请输入父级节点"></el-input>
+            </el-form-item>
+            <el-form-item label="节点ID" prop="menuId">
+              <el-input v-model="form.menuId" :disabled="true" placeholder=""></el-input>
+            </el-form-item>
+            <el-form-item label="标题" prop="name">
+              <el-input v-model="form.name" :disabled="formEdit"  placeholder="请输入标题"></el-input>
+            </el-form-item>
+            <el-form-item label="权限标识" prop="permission">
+              <el-input v-model="form.permission" :disabled="formEdit" placeholder="请输入权限标识"></el-input>
+            </el-form-item>
+            <el-form-item label="图标" prop="icon">
+              <!-- <el-input v-model="form.icon" :disabled="formEdit" placeholder="请输入图标"></el-input> -->
+              <d2-icon-select v-model="form.icon" placeholder="请选择图标"></d2-icon-select>
+            </el-form-item>
+            <el-form-item label="资源路径" prop="url">
+              <el-input v-model="form.url" :disabled="formEdit" placeholder="请输入资源路径"></el-input>
+            </el-form-item>
+            <el-form-item label="请求方法" prop="method">
+              <el-select class="filter-item" v-model="form.method"  :disabled="formEdit"  placeholder="请输入资源请求类型">
+                <el-option v-for="item in  methodOptions" :key="item" :label="item" :value="item"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="类型" prop="type">
+              <el-select class="filter-item" v-model="form.type"  :disabled="formEdit"  placeholder="请输入资源请求类型">
+                <el-option v-for="item in typeOptions" :key="item" :label="item | typeFilter" :value="item"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="排序" prop="sort">
+              <el-input v-model="form.sort" :disabled="formEdit" placeholder="请输入排序"></el-input>
+            </el-form-item>
+            <el-form-item label="前端组件"   prop="component">
+              <el-input v-model="form.component" :disabled="formEdit" placeholder="请输入描述"></el-input>
+            </el-form-item>
+            <el-form-item label="前端地址"   prop="component">
+              <el-input v-model="form.path" :disabled="formEdit" placeholder="iframe嵌套地址"></el-input>
+            </el-form-item>
+          </el-form>
+        </el-scrollbar>
       </el-col>
     </el-row>
     <!-- footer -->

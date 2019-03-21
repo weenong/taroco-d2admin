@@ -16,10 +16,10 @@ import routes from './routes'
 import menuHeader from '@/menu/header'
 import menuAside from '@/menu/aside'
 import { frameInRoutes } from '@/router/routes'
-//路由与组件映射关系
-import routerMapComponents from '@/routerMapComponents'
-//模拟动态菜单与路由
-//import { permissionMenu, permissionRouter } from '@/mock/permissionMenuAndRouter'
+// 路由与组件映射关系
+// import routerMapComponents from '@/routerMapComponents'
+// 模拟动态菜单与路由
+// import { permissionMenu, permissionRouter } from '@/mock/permissionMenuAndRouter'
 
 import { GetMenu } from '@/api/menu'
 import { getUserInfo } from '@/api/login'
@@ -27,10 +27,11 @@ import { getUserInfo } from '@/api/login'
 Vue.use(VueRouter)
 
 // 导出路由 在 main.js 里使用
-const router = new VueRouter({
+let router = new VueRouter({
   routes
 })
 
+// eslint-disable-next-line one-var
 let permissionMenu, permissionRouter = []
 
 let permission = {
@@ -39,10 +40,11 @@ let permission = {
   isAdmin: false
 }
 
-//标记是否已经拉取权限信息
-let isFetchPermissionInfo = false
+// 标记是否已经拉取权限信息
+// let isFetchPermissionInfo = false
 
 let fetchPermissionInfo = async () => {
+  router.matcher = new VueRouter({ routes }).matcher
   // 处理动态添加的路由
   // const formatRoutes = function (routes) {
   //   routes.forEach(route => {
@@ -78,8 +80,6 @@ let fetchPermissionInfo = async () => {
     let aMenus = await GetMenu() // await userService.getUserPermissionInfo()
     permissionRouter = util.formatRoutes(aMenus)
     permissionMenu = util.formatMenus(aMenus)
-    console.log(permissionRouter)
-    console.log(permissionMenu)
     permission.functions = userInfo.permissions
     permission.roles = userInfo.roles
     // permission.interfaces = util.formatInterfaces(userPermissionInfo.accessInterfaces)
@@ -124,9 +124,11 @@ router.beforeEach(async (to, from, next) => {
     const token = util.cookies.get('token')
     if (token && token !== 'undefined') {
       // 拉取权限信息
+      let isFetchPermissionInfo = store.state.d2admin.menu.isFetchPermissionInfo
       if (!isFetchPermissionInfo) {
         await fetchPermissionInfo()
-        isFetchPermissionInfo = true
+        // isFetchPermissionInfo = true
+        store.commit('d2admin/menu/isFetchPermissionInfo', true)
         next(to.path, true)
       } else {
         next()

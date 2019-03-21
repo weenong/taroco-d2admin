@@ -147,7 +147,7 @@ export default {
       this.listLoading = true
       this.listQuery.isAsc = false
       fetchList(this.listQuery).then(response => {
-        this.list = response.data.result
+        this.list = response.result
         this.listLoading = false
       })
     },
@@ -157,7 +157,7 @@ export default {
     handleCodeConfig (row) {
       this.formTitle = row.tableName + '配置项'
       getConfig().then(response => {
-        this.form = response.data.result
+        this.form = response.result
         this.form.tables = [{'tableName': row.tableName}]
         this.dialogFormVisible = true
       })

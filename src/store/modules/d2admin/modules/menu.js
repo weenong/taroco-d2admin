@@ -10,7 +10,8 @@ export default {
     aside: [],
     fullAside: [],
     // 侧边栏收缩
-    asideCollapse: setting.menu.asideCollapse
+    asideCollapse: setting.menu.asideCollapse,
+    isFetchPermissionInfo: false
   },
   actions: {
     /**
@@ -18,7 +19,7 @@ export default {
      * @param {Object} state vuex state
      * @param {Boolean} collapse is collapse
      */
-    asideCollapseSet({ state, dispatch }, collapse) {
+    asideCollapseSet ({ state, dispatch }, collapse) {
       return new Promise(async resolve => {
         // store 赋值
         state.asideCollapse = collapse
@@ -37,7 +38,7 @@ export default {
      * 切换侧边栏展开和收缩
      * @param {Object} state vuex state
      */
-    asideCollapseToggle({ state, dispatch }) {
+    asideCollapseToggle ({ state, dispatch }) {
       return new Promise(async resolve => {
         // store 赋值
         state.asideCollapse = !state.asideCollapse
@@ -56,7 +57,7 @@ export default {
      * 从持久化数据读取侧边栏展开或者收缩
      * @param {Object} state vuex state
      */
-    asideCollapseLoad({ state, dispatch }) {
+    asideCollapseLoad ({ state, dispatch }) {
       return new Promise(async resolve => {
         // store 赋值
         state.asideCollapse = await dispatch('d2admin/db/get', {
@@ -76,7 +77,7 @@ export default {
      * @param {Object} state vuex state
      * @param {Array} menu menu setting
      */
-    headerSet(state, menu) {
+    headerSet (state, menu) {
       // store 赋值
       state.header = menu
     },
@@ -85,14 +86,17 @@ export default {
      * @param {Object} state vuex state
      * @param {Array} menu menu setting
      */
-    asideSet(state, menu) {
+    asideSet (state, menu) {
       // store 赋值
       state.aside = menu
     },
-    fullAsideSet(state, menu) {
+    fullAsideSet (state, menu) {
       // store 赋值
       state.fullAside = menu
       state.aside = menu
+    },
+    isFetchPermissionInfo (state, isFetch) {
+      state.isFetchPermissionInfo = isFetch
     }
   }
 }
