@@ -3,44 +3,51 @@
     <div class="layer bg" id="login"></div>
     <div class="layer flex-center">
       <!-- logo部分 -->
-      <div class="logo-group">
+      <!--<div class="logo-group">
+        <i class="iconfont icon-key-wisdom"></i>
         <img src="./image/logo.png" alt="logo">
-      </div>
+      </div>-->
       <!-- 表单部分 -->
+      <div class="login-bg"></div>
+      <img class="login-img" src="./image/login.png">
+      <div class="login-logo">
+        <i class="iconfont icon-key-wisdom"></i>
+        <h1>智能钥匙管理系统</h1>
+      </div>
       <div class="form-group">
         <el-card>
           <el-form ref="loginForm" label-position="top" :rules="rules" :model="formLogin" size="default">
             <el-form-item prop="username">
               <el-input type="text" v-model="formLogin.username" placeholder="用户名">
-                <i slot="prepend" class="fa fa-user-circle-o"></i>
+                <i slot="prepend" class="iconfont icon-user"></i>
               </el-input>
             </el-form-item>
             <el-form-item prop="password">
               <el-input type="password" v-model="formLogin.password" placeholder="密码">
-                <i slot="prepend" class="fa fa-keyboard-o"></i>
+                <i slot="prepend" class="iconfont icon-mima"></i>
               </el-input>
             </el-form-item>
             <el-form-item prop="code">
               <el-input type="text" v-model="formLogin.code" placeholder="- - - -">
-                <template slot="prepend">验证码</template>
+                <template slot="prepend"><i class="iconfont icon-yanzhengma"></i></template>
                 <template slot="append">
                   <img class="login-code" src="./image/login-code.png">
                 </template>
               </el-input>
             </el-form-item>
             <el-button-group>
-              <el-button size="default" @click="submit" type="primary">登录</el-button>
-              <el-button size="default" @click="resetDb">初始化</el-button>
+              <el-button size="default" class="button-login" @click="submit" type="primary">登录</el-button>
+             <!-- <el-button size="default" @click="resetDb">初始化</el-button>-->
             </el-button-group>
           </el-form>
         </el-card>
       </div>
       <!-- 快速登录按钮 -->
-      <el-button size="default" type="info" class="button-help" @click="dialogVisible = true">
+      <!--<el-button size="default" type="info" class="button-help" @click="dialogVisible = true">
         快速选择用户（测试权限）
-      </el-button>
+      </el-button>-->
     </div>
-    <el-dialog title="快速选择用户" :visible.sync="dialogVisible" width="400px">
+    <!--<el-dialog title="快速选择用户" :visible.sync="dialogVisible" width="400px">
       <el-row :gutter="10" style="margin: -20px 0px -10px 0px;">
         <el-col v-for="(user, index) in users" :key="index" :span="8">
           <div class="user-btn" @click="handleUserBtnClick(user)">
@@ -49,13 +56,13 @@
           </div>
         </el-col>
       </el-row>
-    </el-dialog>
+    </el-dialog>-->
   </div>
 </template>
 
 <script>
 /* eslint-disable */
-require("particles.js");
+// require("particles.js");
 import config from "./config/default";
 import { mapActions } from "vuex";
 import * as sysService from "@/api/sys/sys";

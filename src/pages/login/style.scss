@@ -1,6 +1,7 @@
 @import '~@/assets/style/public.scss';
+@import '~@/assets/iconfont/iconfont.css';
 .login-page {
-    background-color: #EDF4FA;
+    background-color: #fff;
     height: 100%;
     position: relative; // 层
     .layer {
@@ -12,6 +13,45 @@
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            margin-top:-30px;
+        }
+        .login-bg{
+            position: absolute;
+            z-index: 1;
+            background:#0A50A0;
+            width:100%;
+            height:400px;
+        }
+        .login-logo{
+            position:absolute;
+            z-index: 2;
+            z-index: 2;
+            margin-top: -200px;
+            margin-left: -260px;
+            i{
+                float:left;
+                font:normal 80px/50px "Microsoft YaHei";
+                color:#0A50A0;
+                background: #ffffff;
+                padding: 20px 10px;
+                -webkit-border-radius: 5px;
+                -moz-border-radius: 5px;
+                border-radius: 5px;
+            }
+            h1{
+                float:left;
+                margin-left:30px;
+                margin-top:-30px;
+                font:bold 40px/50px "Microsoft YaHei";
+                color:#0A50A0;
+            }
+        }
+        .login-img{
+            position:absolute;
+            z-index: 2;
+            width:500px;
+            margin-left:-200px;
+            opacity: .7;
         }
     } // 背景
     .bg {
@@ -30,11 +70,15 @@
         }
     } // 登录表单
     .form-group {
-        width: 300px; // 重新设置卡片阴影
+        z-index: 2;
+        margin-left:500px;
+        width: 360px; // 重新设置卡片阴影
         .el-card {
-            box-shadow: 0 0 8px 0 rgba(232, 237, 250, .6), 0 2px 4px 0 rgba(232, 237, 250, .5);
+            background:rgba(0,0,0,.2);
+            border:0px;
+            box-shadow: 0 0 18px 0 rgba(0, 0, 0, .1), 0 0px 0px 0 rgba(0, 0, 0, .5);
             .el-card__body {
-                padding-top: 70px;
+                padding-top: 30px;
             }
         } // 登录按钮
         .button-login {
@@ -49,6 +93,9 @@
             margin: 0px -20px;
             border-top-right-radius: 2px;
             border-bottom-right-radius: 2px;
+        }
+        .el-card__body{
+            padding:30px;
         }
     } // 帮助按钮
     .button-help {

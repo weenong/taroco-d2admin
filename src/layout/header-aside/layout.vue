@@ -16,8 +16,16 @@
         flex-box="0"
         flex>
         <div class="logo-group" :style="{width: asideCollapse ? asideWidthCollapse : asideWidth}" flex-box="0">
-          <img v-if="asideCollapse" :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/icon-only.png`">
-          <img v-else :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`">
+          <div  v-if="asideCollapse" class="logo-index  no">
+            <i class="iconfont icon-key-wisdom"></i>
+
+          </div>
+          <div  v-else class="logo-index">
+            <i class="iconfont icon-key-wisdom"></i>
+            <p>智能钥匙</p>
+          </div>
+          <!--<img v-if="asideCollapse" :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/icon-only.png`">-->
+          <!--<img v-else :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`">-->
         </div>
         <div class="toggle-aside-btn" @click="handleToggleAside" flex-box="0">
           <d2-icon name="bars"/>
@@ -145,4 +153,18 @@ export default {
 <style lang="scss">
 // 注册主题
 @import '~@/assets/style/theme/register.scss';
+@import '~@/assets/iconfont/iconfont.css';
+  .logo-index>i.iconfont{
+    float:left;
+    font:normal 40px/40px "Microsoft YaHei";
+  }
+.logo-index p{
+  float:left;
+  padding:0px;margin:0px;padding-right:10px;
+  font:normal 24px/40px "Microsoft YaHei";
+}
+  .logo-index{
+    padding:8px 0px 0px 20px;
+    color:#0A50A0;
+  }
 </style>
