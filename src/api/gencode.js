@@ -8,6 +8,14 @@ export function fetchList (query) {
   })
 }
 
+export function columns (query) {
+  return request({
+    url: '/admin/gencode/columns',
+    method: 'get',
+    params: query
+  })
+}
+
 export const exportCodeZip = (param) => {
   return request({
     url: '/admin/gencode/code',

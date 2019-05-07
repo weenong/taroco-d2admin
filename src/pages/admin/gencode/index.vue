@@ -23,6 +23,7 @@
               element-loading-text="拼命加载中..."
               highlight-current-row
               stripe
+              height="100%"
               style="width: 100%">
 
       <el-table-column align="center" label="表名">
@@ -56,7 +57,7 @@
       </el-table-column>
     </el-table>
 
-    <el-dialog :title="formTitle" :visible.sync="dialogFormVisible" width="600px">
+    <el-dialog :title="formTitle" :visible.sync="dialogFormVisible" width="800px">
       <el-form :model="form" ref="form" label-width="100px" size="mini">
         <el-row>
           <el-col :span="12">
@@ -95,6 +96,44 @@
           </el-col>
         </el-row>
       </el-form>
+      
+      <el-table
+        :data="columnList"
+        max-height="230"
+        border
+        style="width: 100%">
+
+        <el-table-column align="center" label="列名">
+          <template slot-scope="scope">
+            <i class="el-icon-info" v-if="scope.row.columnKey == 'PRI'"></i>
+            <span style="margin-left: 10px">{{scope.row.columnName}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="列类型">
+          <template slot-scope="scope">
+            <span>{{scope.row.dataType}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" label="字段名">
+          <template slot-scope="scope">
+            <span>{{scope.row.columnName}}</span>
+          </template>
+        </el-table-column>        
+        <el-table-column align="center" label="字段类型">
+          <template slot-scope="scope">
+            <span>{{scope.row.dataType}}</span>
+          </template>
+        </el-table-column>   
+        <el-table-column label="关联表">
+          <template slot-scope="scope">
+            <el-cascader v-model="scope.row.casTable"
+              :options="list"
+              @active-item-change="handleItemChange"
+              :props="props"
+            ></el-cascader>
+          </template>
+        </el-table-column>
+      </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel()" icon="el-icon-close" size="mini">取 消</el-button>
         <el-button type="primary" @click="exportCodeZipHandle()" icon="el-icon-check" size="mini">生 成</el-button>
@@ -104,19 +143,23 @@
 </template>
 
 <script>
-import { fetchList, getConfig, exportCodeZip } from '@/api/gencode'
+import { fetchList,columns, getConfig, exportCodeZip } from '@/api/gencode'
 import { mapGetters } from 'vuex'
 import ElRadioGroup from 'element-ui/packages/radio/src/radio-group'
 import ElOption from 'element-ui/packages/select/src/option'
+
+// import { Divider } from 'iview'
 export default {
   components: {
     ElOption,
-    ElRadioGroup
+    ElRadioGroup,
+    // Divider
   },
   data () {
     return {
       list: null,
       total: null,
+      columnList: null,
       listLoading: true,
       formTitle: '配置项',
       listQuery: {
@@ -124,13 +167,18 @@ export default {
       tableKey: 0,
       dialogFormVisible: false,
       form: {
-        tables: [],
+        table: undefined,
         basePackageName: undefined,
         modelPackageName: undefined,
         controllerPackageName: undefined,
         servicePackageName: undefined,
         daoPackageName: undefined,
         authorName: undefined
+      },
+      props: {
+        label: 'tableName',
+        value: 'tableName',
+        children: 'columnInfoList'
       }
     }
   },
@@ -158,8 +206,11 @@ export default {
       this.formTitle = row.tableName + '配置项'
       getConfig().then(response => {
         this.form = response.result
-        this.form.tables = [{'tableName': row.tableName}]
-        this.dialogFormVisible = true
+        this.form.table = {'tableName':row.tableName}
+        columns({'tableName': row.tableName}).then(response =>{
+          this.columnList = response.result
+          this.dialogFormVisible = true
+        })
       })
     },
     cancel () {
@@ -167,9 +218,10 @@ export default {
       this.$refs['form'].resetFields()
     },
     exportCodeZipHandle () {
+      this.form.table.columnInfoList = this.columnList
       exportCodeZip(this.form).then(res => {
         this.dialogShow = false
-        const content = res.data
+        const content = res
         const blob = new Blob([content])
         const fileName = 'code.zip'
         if ('download' in document.createElement('a')) { // 非IE下载
@@ -183,6 +235,24 @@ export default {
           document.body.removeChild(elink)
         } else { // IE10+下载
           navigator.msSaveBlob(blob, fileName)
+        }
+      })
+    },
+    handleItemChange(val) {
+      let value = val[0]
+      console.log(value)
+      columns({'tableName': value}).then(response =>{
+        let columnList = response.result || []
+        let columns = []
+        for(let i=0;i<columnList.length;i++){
+          let item = {}
+          item.tableName = columnList[i].columnName
+          columns.push(item)
+        }
+        for(let i=0;i<this.list.length;i++){
+          if(this.list[i].tableName == value){
+            this.$set(this.list[i], 'columnInfoList', columns) // right
+          }
         }
       })
     }

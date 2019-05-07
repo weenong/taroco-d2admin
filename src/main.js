@@ -11,13 +11,13 @@ import store from '@/store/index'
 import i18n from './i18n'
 // 核心插件
 import d2Admin from '@/plugin/d2admin'
+// import 'iview/dist/styles/iview.css'
 // 路由
 import router from './router'
 // 全局filter
 import * as filters from './filters'
 // 核心插件
 Vue.use(d2Admin, { store })
-
 // 全局filter
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
