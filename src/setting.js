@@ -62,6 +62,11 @@ export default {
         title: 'Tomorrow Night Blue (vsCode)',
         name: 'tomorrow-night-blue',
         preview: 'image/theme/tomorrow-night-blue/preview@2x.png'
+      },
+      {
+        title: '蓝色',
+        name: 'metro',
+        preview: 'image/theme/metro/preview@2x.png'
       }
     ]
   },

@@ -60,7 +60,7 @@
   .el-menu--horizontal .el-menu .el-submenu__title:hover {
     @include theme-menu-hover-style;
   }
-  
+
   // 顶栏
   .d2-theme-header {
     // 顶栏菜单空间不足时显示的滚动控件
@@ -414,3 +414,55 @@
     }
   }
 }
+.theme-tomorrow-night-blue{
+  .d2-theme-header{
+    .login-index{
+      color:#fff;
+    }
+  }
+}
+.theme-metro{
+  background:#edeef2;
+  .d2-theme-header{
+    background:#3557b7;
+    color:#fff;
+    .d2-header-right{
+      .el-button--text,
+      .d2-mr.el-dropdown{
+        color: #94aaeb
+      }
+    }
+    .login-index{
+      color:#fff;
+    }
+  }
+  .d2-theme-container{
+    .d2-theme-container-aside{
+      background:#192538;
+      color:#807e8c;
+      .el-submenu__title,
+      .el-menu-item{
+        color:#807e8c;
+      }
+      .el-menu-item.is-active{
+        color:#fff;
+      }
+      .el-submenu__title:hover{
+        background:transparent;
+        color:#fff;
+      }
+      .d2-layout-header-aside-menu-side{
+        .el-menu{
+          li:hover{
+            background:transparent;
+            color:#fff;
+          }
+        }
+      }
+    }
+  }
+  .d2-multiple-page-control-group{
+    background:#fff;
+  }
+}
+

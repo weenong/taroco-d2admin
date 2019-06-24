@@ -15,10 +15,13 @@
         }"
         flex-box="0"
         flex>
-        <div class="logo-group" :style="{width: asideCollapse ? asideWidthCollapse : asideWidth}" flex-box="0">
+        <div class="logo-index">
+          <i class="iconfont icon-key-wisdom"></i>
+          <p>智能钥匙</p>
+        </div>
+        <div class="logo-group" v-show="false" :style="{width: asideCollapse ? asideWidthCollapse : asideWidth}" flex-box="0">
           <div  v-if="asideCollapse" class="logo-index  no">
             <i class="iconfont icon-key-wisdom"></i>
-
           </div>
           <div  v-else class="logo-index">
             <i class="iconfont icon-key-wisdom"></i>
@@ -27,7 +30,7 @@
           <!--<img v-if="asideCollapse" :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/icon-only.png`">-->
           <!--<img v-else :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`">-->
         </div>
-        <div class="toggle-aside-btn" @click="handleToggleAside" flex-box="0">
+        <div class="toggle-aside-btn" v-show="false" @click="handleToggleAside" flex-box="0">
           <d2-icon name="bars"/>
         </div>
         <d2-menu-header flex-box="1"/>
@@ -44,6 +47,7 @@
       </div>
       <!-- 下面 主体 -->
       <div class="d2-theme-container" flex-box="1" flex>
+
         <!-- 主体 侧边栏 -->
         <div
           flex-box="0"
@@ -53,6 +57,9 @@
             width: asideCollapse ? asideWidthCollapse : asideWidth,
             opacity: this.searchActive ? 0.5 : 1
           }">
+          <div class="toggle-aside-btn left" :class="asideCollapse ? asideWidthCollapse:leftIcon"  @click="handleToggleAside" flex-box="0">
+            <d2-icon name="bars"/><span class="font">收起</span>
+          </div>
           <d2-menu-side/>
         </div>
         <!-- 主体 -->
@@ -111,6 +118,7 @@ export default {
     return {
       // [侧边栏宽度] 正常状态
       asideWidth: '200px',
+      leftIcon:'focus',
       // [侧边栏宽度] 折叠状态
       asideWidthCollapse: '65px'
     }
@@ -165,6 +173,33 @@ export default {
 }
   .logo-index{
     padding:8px 0px 0px 20px;
-    color:#0A50A0;
   }
+
+  .toggle-aside-btn.left{
+    position:absolute;
+    z-index:100;
+    right:0px;
+    left:0px;
+    top:0px;
+    line-height:40px;
+    text-align:center;
+    cursor:pointer;
+    i{
+      font-size:16px;
+    }
+    .font{
+      display:none;
+      font-size:14px;
+    }
+  }
+.toggle-aside-btn.left.focus{
+  text-align:left;
+  padding-left:20px;
+  .font{
+    display:inline-block;
+    padding-left:5px;
+  }
+}
+
+/*  .d2-theme-header{background:#3557b7 !important;}*/
 </style>

@@ -51,6 +51,6 @@ new Vue({
     //   let fullAside = this.$store.state.d2admin.menu.fullAside
     //   const _side = fullAside.filter(menu => menu.path === val[0].path)
     //   this.$store.commit('d2admin/menu/asideSet', _side.length > 0 ? _side[0].children : [])
-    // }
+    // }y
   }
 }).$mount('#app')

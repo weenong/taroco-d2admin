@@ -1,5 +1,5 @@
 <template>
-  <div class="d2-layout-header-aside-menu-side">
+  <div class="d2-layout-header-aside-menu-side leftMenu" style="top:40px;">
     <el-menu
       :collapse="asideCollapse"
       :unique-opened="true"

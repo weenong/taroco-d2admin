@@ -62,6 +62,7 @@ export default {
       'set'
     ]),
     handleSelectTheme (name) {
+      console.info(name,'aaa');
       this.set(name)
     }
   }
