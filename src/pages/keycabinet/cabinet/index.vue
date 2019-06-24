@@ -29,7 +29,7 @@
           <span>{{scope.row.id}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="编码" width="100">
+      <el-table-column align="center" label="编码" >
         <template slot-scope="scope">
           <span>{{scope.row.code}}</span>
         </template>
@@ -44,18 +44,18 @@
           <span>{{scope.row.address}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="地址" width="150">
+      <el-table-column align="center" label="地址" width="130">
         <template slot-scope="scope">
           <span>{{scope.row.ip}}:{{scope.row.port}}</span>
         </template>
       </el-table-column>
      
-      <el-table-column align="center" label="备注" width="200" show-overflow-tooltip>
+      <el-table-column align="center" label="备注" width="150" show-overflow-tooltip>
         <template slot-scope="scope">
           <span>{{scope.row.memo}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="创建时间" width="150" show-overflow-tooltip>
+      <el-table-column align="center" label="创建时间" width="130" show-overflow-tooltip>
         <template slot-scope="scope">
           <span>{{scope.row.createTime|parseTime('{y}-{m}-{d}')}}</span>
         </template>
