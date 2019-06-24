@@ -7,7 +7,7 @@
       :model="listQuery"
       size="mini"
       style="margin-bottom: -18px;">
-        <el-form-item label="用户名" prop="username">
+        <el-form-item label="角色名称" prop="username">
           <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="角色名" v-model="listQuery.roleName" clearable>
           </el-input>
         </el-form-item>
@@ -52,9 +52,11 @@
       </template>
     </el-table-column>
 
-    <el-table-column align="center" label="所属部门">
+    <el-table-column align="center" label="所属部门" show-overflow-tooltip>
       <template slot-scope="scope">
-        <span>{{scope.row.deptName }}</span>
+        <span v-for='(dept, index) in scope.row.deptList'>
+        <span>{{dept.name}}</span><span v-if="index < scope.row.deptList.length - 1">,&nbsp;</span>
+        </span>
       </template>
     </el-table-column>
 
@@ -98,8 +100,7 @@
         <el-input v-model="form.roleDesc" placeholder="描述"></el-input>
       </el-form-item>
       <el-form-item label="所属部门" prop="roleDept">
-        <el-input v-model="form.deptName" placeholder="选择部门" @focus="handleDept()" readonly></el-input>
-        <el-input type="hidden" v-model="form.roleDeptId"></el-input>
+        <el-input v-model="form.deptNames" placeholder="选择部门" @focus="handleDept()" readonly></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -110,12 +111,15 @@
   </el-dialog>
 
   <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogDeptVisible" width="600px">
-    <el-tree class="filter-tree" :data="treeDeptData" :default-checked-keys="checkedKeys" check-strictly node-key="id" highlight-current ref="deptTree" @node-click="getNodeData" :props="defaultProps" :filter-node-method="filterNode" default-expand-all>
+    <el-tree class="filter-tree" :data="treeDeptData" :default-checked-keys="checkedDeptIds" check-strictly node-key="id" highlight-current ref="deptTree" :props="defaultProps" show-checkbox :filter-node-method="filterNode" default-expand-all>
     </el-tree>
+    <div slot="footer" class="dialog-footer">
+      <el-button type="primary" @click="getNodeData()" >确定</el-button>
+    </div>
   </el-dialog>
 
   <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogPermissionVisible" width="800px" top="20px">
-    <el-tree class="filter-tree" :data="treeData" :default-checked-keys="checkedKeys" check-strictly node-key="id" highlight-current :props="defaultProps" show-checkbox ref="menuTree" :filter-node-method="filterNode">
+    <el-tree class="filter-tree" :data="treeData" :default-checked-keys="checkedKeys" node-key="id" highlight-current :props="defaultProps" show-checkbox ref="menuTree" :filter-node-method="filterNode">
     </el-tree>
     <div slot="footer" class="dialog-footer">
       <el-button type="primary" @click="updatePermession(roleId, roleCode)" icon="el-icon-check">授 权</el-button>
@@ -145,6 +149,7 @@ export default {
       treeData: [],
       treeDeptData: [],
       checkedKeys: [],
+      checkedDeptIds: [],
       defaultProps: {
         children: 'children',
         label: 'name'
@@ -160,8 +165,8 @@ export default {
         roleName: undefined,
         roleCode: undefined,
         roleDesc: undefined,
-        deptName: undefined,
-        roleDeptId: undefined
+        deptNames: undefined,
+        deptList: []
       },
       roleId: undefined,
       roleCode: undefined,
@@ -242,6 +247,7 @@ export default {
     getList () {
       this.listLoading = true
       fetchList(this.listQuery).then(response => {
+        console.log(response)
         this.list = response.records
         this.total = response.total
         this.listLoading = false
@@ -263,8 +269,20 @@ export default {
     handleUpdate (row) {
       getObj(row.roleId).then(response => {
         this.form = response
-        this.form.deptName = row.deptName
-        this.form.roleDeptId = row.roleDeptId
+        this.form.deptList = []
+        let deptList = row.deptList
+        let deptNames = []
+        this.checkedDeptIds = []
+        for(let i=0;i<deptList.length;i++){
+          this.form.deptList[i] = {}
+          this.form.deptList[i].deptId = deptList[i].deptId
+          this.form.deptList[i].name = deptList[i].name
+          deptNames[i] = deptList[i].name
+          this.checkedDeptIds[i] = deptList[i].deptId
+        }
+        this.form.deptNames = deptNames.join(',')
+        // this.form.deptName = row.deptName
+        // this.form.roleDeptId = row.roleDeptId
         this.dialogFormVisible = true
         this.dialogStatus = 'update'
       })
@@ -293,11 +311,20 @@ export default {
       if (!value) return true
       return data.label.indexOf(value) !== -1
     },
-    getNodeData (data) {
+    getNodeData () {
       this.dialogDeptVisible = false
-      this.form.roleDeptId = data.id
-      this.form.deptName = data.name
-      console.log(data)
+      // this.form.roleDeptId = data.id
+      // this.form.deptName = data.name
+      let checkedNodes = this.$refs.deptTree.getCheckedNodes()
+      this.form.deptList = []
+      let deptNames = []
+      for(let i=0;i<checkedNodes.length;i++){
+        this.form.deptList[i] = {}
+        this.form.deptList[i].deptId = checkedNodes[i].id
+        this.form.deptList[i].name = checkedNodes[i].name
+        deptNames[i] = checkedNodes[i].name
+      }
+      this.form.deptNames = deptNames.join(',')
     },
     handleDelete (row) {
       delObj(row.roleId).then(response => {

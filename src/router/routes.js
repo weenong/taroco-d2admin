@@ -45,8 +45,8 @@ const frameIn = [
         }
       }
     ]
-  },
-  demo
+  }
+  // ,demo
 ]
 
 /**

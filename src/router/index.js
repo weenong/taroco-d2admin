@@ -88,16 +88,16 @@ let fetchPermissionInfo = async () => {
     console.log(ex)
   }
   // formatRoutes(permissionRouter)
-  let allMenuAside = [...menuAside, ...permissionMenu]
+  // let allMenuAside = [...menuAside, ...permissionMenu]
   let allMenuHeader = [...menuHeader, ...permissionMenu]
   // 动态添加路由
   router.addRoutes(permissionRouter)
   // 处理路由 得到每一级的路由设置
   store.commit('d2admin/page/init', [...frameInRoutes, ...permissionRouter])
   // 设置顶栏菜单
-  store.commit('d2admin/menu/headerSet', allMenuHeader)
+  // store.commit('d2admin/menu/headerSet', allMenuHeader)
   // 设置侧边栏菜单
-  store.commit('d2admin/menu/fullAsideSet', allMenuAside)
+  store.commit('d2admin/menu/fullAsideSet', allMenuHeader)
   // 初始化菜单搜索功能
   store.commit('d2admin/search/init', allMenuHeader)
   // 设置权限信息

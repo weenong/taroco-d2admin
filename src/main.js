@@ -11,6 +11,8 @@ import store from '@/store/index'
 import i18n from './i18n'
 // 核心插件
 import d2Admin from '@/plugin/d2admin'
+
+import SplitPane from 'vue-splitpane'
 // import 'iview/dist/styles/iview.css'
 // 路由
 import router from './router'
@@ -18,6 +20,8 @@ import router from './router'
 import * as filters from './filters'
 // 核心插件
 Vue.use(d2Admin, { store })
+
+Vue.component('SplitPane', SplitPane)
 // 全局filter
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
@@ -43,10 +47,10 @@ new Vue({
     this.$store.dispatch('d2admin/fullscreen/listen')
   },
   watch: {
-    '$route.matched'(val) {
-      let fullAside = this.$store.state.d2admin.menu.fullAside
-      const _side = fullAside.filter(menu => menu.path === val[0].path)
-      this.$store.commit('d2admin/menu/asideSet', _side.length > 0 ? _side[0].children : [])
-    }
+    // '$route.matched'(val) {
+    //   let fullAside = this.$store.state.d2admin.menu.fullAside
+    //   const _side = fullAside.filter(menu => menu.path === val[0].path)
+    //   this.$store.commit('d2admin/menu/asideSet', _side.length > 0 ? _side[0].children : [])
+    // }
   }
 }).$mount('#app')

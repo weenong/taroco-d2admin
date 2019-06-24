@@ -67,7 +67,7 @@ export default {
         selection: false
       })
       fabric.Object.prototype.transparentCorners = false;
-      const url = 'http://localhost:8080/img/school.43aaa5ba.png'
+      const url = 'http://39.98.53.99:8082/d2admin/img/school.43aaa5ba.png'
       fabric.Image.fromURL(url, (img) => {
         const oImg = img.set({
             left: 0,

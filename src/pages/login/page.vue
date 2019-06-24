@@ -106,16 +106,16 @@ export default {
   },
   mounted() {
     // 初始化例子插件
-    particlesJS("login", config);
+    // particlesJS("login", config);
   },
   beforeDestroy() {
     // 销毁 particlesJS
     // thanks https://github.com/d2-projects/d2-admin/issues/65
     // ref https://github.com/VincentGarreau/particles.js/issues/63
-    if (pJSDom && pJSDom.length > 0) {
-      pJSDom[0].pJS.fn.vendors.destroypJS();
-      pJSDom = [];
-    }
+    // if (pJSDom && pJSDom.length > 0) {
+    //   pJSDom[0].pJS.fn.vendors.destroypJS();
+    //   pJSDom = [];
+    // }
   },
   methods: {
     ...mapActions("d2admin/account", ["login"]),
