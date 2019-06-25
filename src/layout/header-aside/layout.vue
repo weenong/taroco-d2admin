@@ -195,11 +195,13 @@ export default {
 .toggle-aside-btn.left.focus{
   text-align:left;
   padding-left:20px;
+  i{
+    padding-right:10px;
+  }
   .font{
     display:inline-block;
     padding-left:5px;
   }
 }
 
-/*  .d2-theme-header{background:#3557b7 !important;}*/
 </style>

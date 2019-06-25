@@ -5,5 +5,18 @@
   .d2-layout-header-aside-group {
     background: #bc00e3;
     background: linear-gradient(120deg, #bc00e3 0%, #4EFFFB 100%);
+    .d2-layout-header-aside-content{
+      .d2-theme-header{
+        .logo-index{
+          color:#fff;
+        }
+      }
+      .d2-theme-container{
+        .toggle-aside-btn.left{
+          color:#fff;
+          background:rgba(255,255,255,.1);
+        }
+      }
+    }
   }
 }

@@ -1,2 +1,13 @@
 @import './setting.scss';
 @import '../theme.scss';
+.theme-#{$theme-name} {
+  .d2-layout-header-aside-group {
+    .d2-layout-header-aside-content{
+      .d2-theme-container{
+        .toggle-aside-btn.left{
+          background:rgba(255,255,255,.6);
+        }
+      }
+    }
+  }
+}
