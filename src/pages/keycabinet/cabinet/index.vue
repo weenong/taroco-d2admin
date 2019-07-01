@@ -63,6 +63,7 @@
       
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
+          <el-button v-if="keyCabinet_upd" size="mini" type="primary" @click="handleDetail(scope.row)" icon="el-icon-more"></el-button>
           <el-button v-if="keyCabinet_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
           <el-button v-if="keyCabinet_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
         </template>
@@ -74,43 +75,90 @@
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="listQuery.page" :page-sizes="[10,20,30,50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total" style="margin: -10px;">
       </el-pagination>
     </template>
+    <el-dialog title="详细信息" :visible.sync="dialogDetailVisible" width="600px">
+      <div class="el-dialog-div">
+        <SplitPane :min-percent='40' :default-percent='40' split="vertical">
+          <template slot="paneL">
+            <el-divider content-position="left">钥匙列表</el-divider>
+            <el-row>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="info"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+            </el-row>
+            <el-row>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="info"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="danger"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+            </el-row>
+            <el-row>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="danger"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="info"></el-tag></el-col>
+              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
+            </el-row>
+          </template>
+          <template slot="paneR">
+            <el-divider content-position="left">已授权人员</el-divider>
+            <div>
+              <el-tag
+                :key="tag"
+                v-for="tag in dynamicTags">
+                {{tag}}
+              </el-tag>
+            </div>
+          </template>
+        </SplitPane>
+      </div>
+      
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelDetail()" icon="el-icon-close" size="mini">取 消</el-button>
+        <el-button type="primary" @click="cancelDetail()" icon="el-icon-check" size="mini">权限下发</el-button>
+      </div>
+    </el-dialog>
     <!-- 新增弹框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="form" label-width="80px" size="mini">
         <el-row>
-          </el-col>
-          <el-col :span="12">
+          <el-col :span=12>
             <el-form-item label="编码" prop="code">
               <el-input v-model="form.code" placeholder=""></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span=12>
             <el-form-item label="名称" prop="name">
               <el-input v-model="form.name" placeholder=""></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24">
+          <el-col :span=24>
             <el-form-item label="位置" prop="address">
               <el-input v-model="form.address" placeholder=""></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
+          <el-col :span=12>
             <el-form-item label="ip地址" prop="ip">
               <el-input v-model="form.ip" placeholder=""></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span=12>
             <el-form-item label="端口" prop="port">
               <el-input v-model="form.port" placeholder=""></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24">
+          <el-col :span=24>
             <el-form-item label="备注" prop="memo">
               <el-input v-model="form.memo" placeholder=""></el-input>
             </el-form-item>
@@ -142,6 +190,8 @@ export default {
       list: null,
       total: null,
       listLoading: true,
+      dynamicTags: [],
+      userList: ['巡检员1','巡检员2','巡检员3','巡检员4','巡检员5','巡检员6'],
       listQuery: {
         page: 1,
         limit: 10
@@ -223,6 +273,7 @@ export default {
         ],
       },
       dialogFormVisible: false,
+      dialogDetailVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
@@ -237,11 +288,17 @@ export default {
   },
   created () {
     this.getList()
+    this.dynamicTags = this.userList
     this.keyCabinet_add = this.hasFunctions(['keyCabinet_add'])
     this.keyCabinet_upd = this.hasFunctions(['keyCabinet_upd'])
     this.keyCabinet_del = this.hasFunctions(['keyCabinet_del'])
+    
   },
   methods: {
+    show () {
+      let idx = Math.floor(Math.random()*36)%3
+      this.dynamicTags = this.userList.slice(idx, 6)
+    },
     getList () {
       this.listLoading = true
       this.listQuery.isAsc = false
@@ -275,6 +332,11 @@ export default {
         this.dialogStatus = 'update'
       })
     },
+    handleDetail (row) {
+      getObj(row.id).then(response => {
+        this.dialogDetailVisible = true
+      })
+    },
     create (formName) {
       const set = this.$refs
       this.form.role = this.role
@@ -299,6 +361,9 @@ export default {
       const set = this.$refs
       this.dialogFormVisible = false
       set[formName].resetFields()
+    },
+    cancelDetail () {
+      this.dialogDetailVisible = false
     },
     update (formName) {
       const set = this.$refs
@@ -350,3 +415,10 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+ .el-dialog-div{
+    height: 40vh;
+    overflow: auto;
+  }
+</style>

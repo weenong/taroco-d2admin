@@ -66,6 +66,7 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
+          <el-button v-if="keyDetail_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-link"></el-button>
           <el-button v-if="keyDetail_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
           <el-button v-if="keyDetail_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
         </template>

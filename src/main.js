@@ -13,6 +13,7 @@ import i18n from './i18n'
 import d2Admin from '@/plugin/d2admin'
 
 import SplitPane from 'vue-splitpane'
+
 // import 'iview/dist/styles/iview.css'
 // 路由
 import router from './router'
