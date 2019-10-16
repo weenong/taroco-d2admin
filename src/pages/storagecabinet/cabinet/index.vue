@@ -4,14 +4,14 @@
     <template slot="header">
       <el-form :inline="true" :model="listQuery" size="mini" style="margin-bottom: -18px;">
         <el-form-item label="查询条件">
-          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="" v-model="listQuery.name" clearable>
+          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="" v-model="listQuery.id" clearable>
           </el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="default" @click="handleFilter" icon="el-icon-search">搜 索</el-button>
         </el-form-item>
         <el-form-item style="float: right">
-          <el-button v-if="keyCabinet_add" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
+          <el-button v-if="storageCabinet_add" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
         </el-form-item>
       </el-form>
     </template>
@@ -24,53 +24,50 @@
       highlight-current-row
       stripe
       style="width: 100%">
-      <el-table-column align="center" label="序号">
+      <el-table-column align="center" label="" width="60">
         <template slot-scope="scope">
           <span>{{scope.row.id}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="编码" >
+      <el-table-column align="center" label="" width="60">
         <template slot-scope="scope">
           <span>{{scope.row.code}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="名称">
+      <el-table-column align="center" label="" width="60">
         <template slot-scope="scope">
           <span>{{scope.row.name}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="区域">
-        <template slot-scope="scope">
-          <span>{{scope.row.placeName}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="位置" width="150" show-overflow-tooltip>
+      <el-table-column align="center" label="" width="60">
         <template slot-scope="scope">
           <span>{{scope.row.address}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="地址" width="130">
+      <el-table-column align="center" label="" width="60">
         <template slot-scope="scope">
-          <span>{{scope.row.ip}}:{{scope.row.port}}</span>
+          <span>{{scope.row.wsAddr}}</span>
         </template>
       </el-table-column>
-     
-      <el-table-column align="center" label="备注" width="150" show-overflow-tooltip>
+      <el-table-column align="center" label="" width="60">
         <template slot-scope="scope">
           <span>{{scope.row.memo}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="创建时间" width="130" show-overflow-tooltip>
+      <el-table-column align="center" label="" width="60">
         <template slot-scope="scope">
-          <span>{{scope.row.createTime|parseTime('{y}-{m}-{d}')}}</span>
+          <span>{{scope.row.createTime}}</span>
         </template>
       </el-table-column>
-      
+      <el-table-column align="center" label="" width="60">
+        <template slot-scope="scope">
+          <span>{{scope.row.updateTime}}</span>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button v-if="keyCabinet_upd" size="mini" type="primary" @click="handleDetail(scope.row)" icon="el-icon-more"></el-button>
-          <el-button v-if="keyCabinet_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
-          <el-button v-if="keyCabinet_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
+          <el-button v-if="storageCabinet_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+          <el-button v-if="storageCabinet_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
         </template>
       </el-table-column>
 
@@ -80,92 +77,54 @@
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="listQuery.page" :page-sizes="[10,20,30,50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total" style="margin: -10px;">
       </el-pagination>
     </template>
-    <el-dialog title="详细信息" :visible.sync="dialogDetailVisible" width="600px">
-      <div class="el-dialog-div">
-        <SplitPane :min-percent='40' :default-percent='40' split="vertical">
-          <template slot="paneL">
-            <el-divider content-position="left">钥匙列表</el-divider>
-            <el-row>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="info"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-            </el-row>
-            <el-row>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="info"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="danger"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-            </el-row>
-            <el-row>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="danger"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="info"></el-tag></el-col>
-              <el-col :span=4><el-tag @click="show()" style="cursor:pointer" size="small" type="success"></el-tag></el-col>
-            </el-row>
-          </template>
-          <template slot="paneR">
-            <el-divider content-position="left">已授权人员</el-divider>
-            <div>
-              <el-tag
-                :key="tag"
-                v-for="tag in dynamicTags">
-                {{tag}}
-              </el-tag>
-            </div>
-          </template>
-        </SplitPane>
-      </div>
-      
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelDetail()" icon="el-icon-close" size="mini">取 消</el-button>
-        <el-button type="primary" @click="cancelDetail()" icon="el-icon-check" size="mini">权限下发</el-button>
-      </div>
-    </el-dialog>
     <!-- 新增弹框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="600px">
       <el-form :model="form" :rules="rules" ref="form" label-width="80px" size="mini">
         <el-row>
-          <el-col :span=12>
-            <el-form-item label="编码" prop="code">
-              <el-input v-model="form.code" placeholder=""></el-input>
+          <el-col :span="12">
+            <el-form-item label="id" prop="id">
+              <el-input v-model="form.id" placeholder=""></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span=12>
-            <el-form-item label="名称" prop="name">
-              <el-input v-model="form.name" placeholder=""></el-input>
+          <el-col :span="12">
+            <el-form-item label="code" prop="code">
+              <el-input v-model="form.code" placeholder=""></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span=24>
-            <el-form-item label="位置" prop="address">
+          <el-col :span="12">
+            <el-form-item label="name" prop="name">
+              <el-input v-model="form.name" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="address" prop="address">
               <el-input v-model="form.address" placeholder=""></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span=12>
-            <el-form-item label="ip地址" prop="ip">
-              <el-input v-model="form.ip" placeholder=""></el-input>
+          <el-col :span="12">
+            <el-form-item label="wsAddr" prop="wsAddr">
+              <el-input v-model="form.wsAddr" placeholder=""></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span=12>
-            <el-form-item label="端口" prop="port">
-              <el-input v-model="form.port" placeholder=""></el-input>
+          <el-col :span="12">
+            <el-form-item label="memo" prop="memo">
+              <el-input v-model="form.memo" placeholder=""></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span=24>
-            <el-form-item label="备注" prop="memo">
-              <el-input v-model="form.memo" placeholder=""></el-input>
+          <el-col :span="12">
+            <el-form-item label="createTime" prop="createTime">
+              <el-input v-model="form.createTime" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="updateTime" prop="updateTime">
+              <el-input v-model="form.updateTime" placeholder=""></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -180,7 +139,7 @@
 </template>
 
 <script>
-import { fetchList, getObj, addObj, putObj, delObj } from '@/api/keycabinet/keyCabinet'
+import { fetchList, getObj, addObj, putObj, delObj } from '@/api/storagecabinet/storageCabinet.js'
 import { mapGetters } from 'vuex'
 import ElRadioGroup from 'element-ui/packages/radio/src/radio-group'
 import ElOption from 'element-ui/packages/select/src/option'
@@ -189,14 +148,12 @@ export default {
     ElOption,
     ElRadioGroup
   },
-  name: 'table_keyCabinet',
+  name: 'table_storageCabinet',
   data () {
     return {
       list: null,
       total: null,
       listLoading: true,
-      dynamicTags: [],
-      userList: ['巡检员1','巡检员2','巡检员3','巡检员4','巡检员5','巡检员6'],
       listQuery: {
         page: 1,
         limit: 10
@@ -206,8 +163,7 @@ export default {
         code: undefined,
         name: undefined,
         address: undefined,
-        ip: undefined,
-        port: undefined,
+        wsAddr: undefined,
         memo: undefined,
         createTime: undefined,
         updateTime: undefined,
@@ -241,14 +197,7 @@ export default {
             trigger: 'blur'
           }
         ],
-        ip: [
-          {
-            required: true,
-            message: '请输入',
-            trigger: 'blur'
-          }
-        ],
-        port: [
+        wsAddr: [
           {
             required: true,
             message: '请输入',
@@ -278,7 +227,6 @@ export default {
         ],
       },
       dialogFormVisible: false,
-      dialogDetailVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
@@ -293,17 +241,11 @@ export default {
   },
   created () {
     this.getList()
-    this.dynamicTags = this.userList
-    this.keyCabinet_add = this.hasFunctions(['keyCabinet_add'])
-    this.keyCabinet_upd = this.hasFunctions(['keyCabinet_upd'])
-    this.keyCabinet_del = this.hasFunctions(['keyCabinet_del'])
-    
+    this.storageCabinet_add = this.hasFunctions(['storageCabinet_add'])
+    this.storageCabinet_upd = this.hasFunctions(['storageCabinet_upd'])
+    this.storageCabinet_del = this.hasFunctions(['storageCabinet_del'])
   },
   methods: {
-    show () {
-      let idx = Math.floor(Math.random()*36)%3
-      this.dynamicTags = this.userList.slice(idx, 6)
-    },
     getList () {
       this.listLoading = true
       this.listQuery.isAsc = false
@@ -337,11 +279,6 @@ export default {
         this.dialogStatus = 'update'
       })
     },
-    handleDetail (row) {
-      getObj(row.id).then(response => {
-        this.dialogDetailVisible = true
-      })
-    },
     create (formName) {
       const set = this.$refs
       this.form.role = this.role
@@ -366,9 +303,6 @@ export default {
       const set = this.$refs
       this.dialogFormVisible = false
       set[formName].resetFields()
-    },
-    cancelDetail () {
-      this.dialogDetailVisible = false
     },
     update (formName) {
       const set = this.$refs
@@ -410,8 +344,7 @@ export default {
         code: undefined,
         name: undefined,
         address: undefined,
-        ip: undefined,
-        port: undefined,
+        wsAddr: undefined,
         memo: undefined,
         createTime: undefined,
         updateTime: undefined,
@@ -420,10 +353,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
- .el-dialog-div{
-    height: 40vh;
-    overflow: auto;
-  }
-</style>
