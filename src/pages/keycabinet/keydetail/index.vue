@@ -10,9 +10,9 @@
         <el-form-item>
           <el-button type="default" @click="handleFilter" icon="el-icon-search">搜 索</el-button>
         </el-form-item>
-        <el-form-item style="float: right">
+        <!-- <el-form-item style="float: right">
           <el-button v-if="keyDetail_add" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
     </template>
     <!-- table表格 -->
@@ -29,9 +29,9 @@
           <span>{{scope.row.id}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="钥匙柜编码" width="100" show-overflow-tooltip>
+      <el-table-column align="center" label="钥匙柜" width="100" show-overflow-tooltip>
         <template slot-scope="scope">
-          <span>{{scope.row.keyCabinetCode}}</span>
+          <span>{{scope.row.keyCabinetName}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="钥匙编码">
@@ -66,9 +66,9 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button v-if="keyDetail_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-link"></el-button>
+          <!-- <el-button v-if="keyDetail_upd" size="mini" type="primary" @click="handleShouquan(scope.row)" icon="el-icon-link"></el-button> -->
           <el-button v-if="keyDetail_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
-          <el-button v-if="keyDetail_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
+          <!-- <el-button v-if="keyDetail_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button> -->
         </template>
       </el-table-column>
 
@@ -78,102 +78,64 @@
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="listQuery.page" :page-sizes="[10,20,30,50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total" style="margin: -10px;">
       </el-pagination>
     </template>
+    <el-dialog title="授权" :visible.sync="shouquanFormVisible" width="600px">
+      <div class="el-dialog-div">
+        
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelshouquan()" icon="el-icon-close" size="mini">取 消</el-button>
+        <el-button type="primary" @click="shouquan()" icon="el-icon-check" size="mini">授 权</el-button>
+      </div>
+    </el-dialog>
     <!-- 新增弹框 -->
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="600px">
       <div class="el-dialog-div">
         <el-form :model="form" :rules="rules" ref="form" label-width="80px" size="mini">
-          <el-tabs v-model="activeTab">
-            <el-tab-pane label="基本信息" name="first">
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="编码" prop="code">
-                    <el-input v-model="form.code" placeholder=""></el-input>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="名称" prop="name">
-                    <el-input v-model="form.name" placeholder=""></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="12">
-                  <el-form-item label="钥匙柜" prop="keyCabinetCode">
-                    <el-select v-model="form.keyCabinetCode" value-key="code" placeholder="请选择" collapse-tags style="width:100%;">
-                      <el-option v-for="item in keyCabinetList" :key="item.code" :label="item.name" :value="item.code" >
-                        <span style="float: left">{{ item.name }}</span>
-                        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
-                      </el-option>
-                    </el-select>
-                  </el-form-item>
-                </el-col>
-                <el-col :span="12">
-                  <el-form-item label="行:列" prop="locRow">
-                    <el-input-number style="width:90px;" v-model="form.locRow" :min="1" :max="10" placeholder=""></el-input-number>
-                    :
-                    <el-input-number style="width:90px;" v-model="form.locCol" :min="1" :max="10" placeholder=""></el-input-number>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="24">
-                  <el-form-item label="用途" prop="ability">
-                    <el-input v-model="form.ability" placeholder=""></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-              <el-row>
-                <el-col :span="24">
-                  <el-form-item label="备注" prop="memo">
-                    <el-input v-model="form.memo" placeholder=""></el-input>
-                  </el-form-item>
-                </el-col>
-              </el-row>
-            </el-tab-pane>
-            <el-tab-pane label="权限分配" name="second">
-              <el-table 
-                      :data="userList"
-                      highlight-current-row
-                      height="250"
-                      stripe
-                      style="width: 100%">
-                <el-table-column type="selection"></el-table-column>
-                <el-table-column align="center" label="用户名">
-                  <template slot-scope="scope">
-                    <span>
-                      <img v-if="scope.row.avatar" class="user-avatar" style="width: 20px; height: 20px; border-radius: 50%;" :src="scope.row.avatar+'?imageView2/1/w/20/h/20'"> {{scope.row.username}}
-                    </span>
-                  </template>
-                </el-table-column>
-                <el-table-column align="center" label="手机号">
-                  <template slot-scope="scope">
-                    <span>{{scope.row.phone}}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column align="center" label="所属部门" show-overflow-tooltip>
-                  <template slot-scope="scope">
-                    <span>{{scope.row.deptName}} </span>
-                  </template>
-                </el-table-column>
-                <el-table-column align="center" label="角色">
-                  <template slot-scope="scope">
-                    <span v-for="role in scope.row.roleList" :key="role.id">{{role.roleDesc}} </span>
-                  </template>
-                </el-table-column>
-                <el-table-column align="center" label="标签">
-                  <template slot-scope="scope">
-                    <span>{{scope.row.label}}</span>
-                  </template>
-                </el-table-column>
-
-                <el-table-column align="center" label="状态">
-                  <template slot-scope="scope">
-                    <el-tag>{{scope.row.delFlag | statusFilter}}</el-tag>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-tab-pane>
-          </el-tabs>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="编码" prop="code">
+                <el-input v-model="form.code" disabled></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="名称" prop="name">
+                <el-input v-model="form.name" placeholder=""></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="钥匙柜" prop="keyCabinetCode">
+                <el-select v-model="form.keyCabinetCode" value-key="code" placeholder="请选择" collapse-tags style="width:100%;">
+                  <el-option v-for="item in keyCabinetList" :key="item.code" :label="item.name" :value="item.code" >
+                    <span style="float: left">{{ item.name }}</span>
+                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="行:列" prop="locRow">
+                <el-input-number style="width:90px;" v-model="form.locRow" :min="1" :max="10" disabled></el-input-number>
+                :
+                <el-input-number style="width:90px;" v-model="form.locCol" :min="1" :max="10" disabled></el-input-number>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="用途" prop="ability">
+                <el-input v-model="form.ability" placeholder=""></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="备注" prop="memo">
+                <el-input v-model="form.memo" placeholder=""></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
           
         </el-form>
       </div>
@@ -189,7 +151,6 @@
 <script>
 import { fetchList, getObj, addObj, putObj, delObj } from '@/api/keycabinet/keyDetail'
 import * as keyCabinetService from '@/api/keycabinet/keyCabinet'
-import * as userService from '@/api/user'
 import { mapGetters } from 'vuex'
 import ElRadioGroup from 'element-ui/packages/radio/src/radio-group'
 import ElOption from 'element-ui/packages/select/src/option'
@@ -201,8 +162,6 @@ export default {
   name: 'table_keyDetail',
   data () {
     return {
-      userList: null,
-      activeTab: 'first',
       keyCabinetList: null,
       list: null,
       total: null,
@@ -296,6 +255,7 @@ export default {
         ],
       },
       dialogFormVisible: false,
+      shouquanFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
@@ -323,12 +283,6 @@ export default {
     this.keyDetail_del = this.hasFunctions(['keyDetail_del'])
   },
   methods: {
-    userList () {
-      userService.fetchList(this.listQuery).then(response => {
-        this.userList = response.records
-        this.userTotal = response.total
-      })
-    },
     getList () {
       this.listLoading = true
       this.listQuery.isAsc = false
@@ -357,11 +311,8 @@ export default {
       param.limit = 1000
       keyCabinetService.fetchList(param).then(response => {
         this.keyCabinetList = response.records
-        userService.fetchList(param).then(response => {
-          this.userList = response.records
-          this.dialogStatus = 'create'
-          this.dialogFormVisible = true
-        })
+        this.dialogStatus = 'create'
+        this.dialogFormVisible = true
       })
     },
     handleUpdate (row) {
@@ -372,16 +323,20 @@ export default {
         param.limit = 1000
         keyCabinetService.fetchList(param).then(response => {
           this.keyCabinetList = response.records
-          userService.fetchList(param).then(response => {
-            this.userList = response.records
-
-            this.dialogFormVisible = true
-            this.dialogStatus = 'update'
-          })
+          this.dialogFormVisible = true
+          this.dialogStatus = 'update'
    
         })
       })
     },
+    handleShouquan (row) {
+      getObj(row.id).then(response => {
+        this.form = response
+        this.shouquanFormVisible = true
+      })
+    },
+
+    
     create (formName) {
       const set = this.$refs
       this.form.role = this.role
@@ -402,6 +357,9 @@ export default {
         }
       })
     },
+    cancelshouquan () {
+      this.shouquanFormVisible = false
+    },
     cancel (formName) {
       const set = this.$refs
       this.dialogFormVisible = false
@@ -413,15 +371,25 @@ export default {
         if (valid) {
           this.dialogFormVisible = false
           this.form.password = undefined
-          putObj(this.form).then(() => {
-            this.dialogFormVisible = false
-            this.getList()
-            this.$notify({
-              title: '成功',
-              message: '修改成功',
-              type: 'success',
-              duration: 2000
-            })
+          putObj(this.form).then(response => {
+            if(response.result){
+              this.dialogFormVisible = false
+              this.getList()
+              this.$notify({
+                title: '成功',
+                message: '修改成功',
+                type: 'success',
+                duration: 2000
+              })
+            }else{
+              this.$notify({
+                title: '失败',
+                message: '修改失败',
+                type: 'info',
+                duration: 2000
+              })
+            }
+            
           })
         } else {
           return false
@@ -460,7 +428,7 @@ export default {
 </script>
 <style lang="scss" scoped>
  .el-dialog-div{
-    height: 50vh;
+    height: 30vh;
     overflow: auto;
   }
 

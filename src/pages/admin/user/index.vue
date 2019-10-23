@@ -40,7 +40,21 @@
           </span>
         </template>
       </el-table-column>
-
+      <el-table-column align="center" label="编号" width="80">
+        <template slot-scope="scope">
+          <span>{{scope.row.userCode}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="姓名" width="80">
+        <template slot-scope="scope">
+          <span>{{scope.row.realName}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="卡号" width="80">
+        <template slot-scope="scope">
+          <span>{{scope.row.cardNo}}</span>
+        </template>
+      </el-table-column>
       <el-table-column align="center" label="手机号">
         <template slot-scope="scope">
           <span>{{scope.row.phone}}</span>
@@ -121,6 +135,18 @@
         </el-row>
         <el-row>
           <el-col :span="12">
+            <el-form-item label="编号" prop="userCode">
+              <el-input v-model="form.userCode" placeholder="请输用户编号"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="姓名" prop="realName">
+              <el-input v-model="form.realName"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>        
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="所属部门" prop="deptName">
               <el-input v-model="form.deptName" placeholder="选择部门" @focus="handleDept()" readonly></el-input>
               <input type="hidden" v-model="form.deptId" />
@@ -152,9 +178,16 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-form-item label="标签" prop="label">
-            <el-input v-model="form.label" placeholder="多个标签 ',' 隔开"></el-input>
-          </el-form-item>
+          <el-col :span="12">
+            <el-form-item label="标签" prop="label">
+              <el-input v-model="form.label" placeholder="多个标签 ',' 隔开"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="卡号" prop="cardNo">
+              <el-input v-model="form.cardNo" ></el-input>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -199,6 +232,9 @@ export default {
         limit: 10
       },
       form: {
+        userCode: undefined,
+        realName: undefined,
+        cardNo: undefined,
         username: undefined,
         newpassword1: undefined,
         delFlag: undefined,
@@ -432,6 +468,9 @@ export default {
       this.form = {
         id: undefined,
         username: '',
+        userCode: '',
+        realName: '',
+        cardNo: '',
         password: '',
         roleList: [],
         delFlag: '',

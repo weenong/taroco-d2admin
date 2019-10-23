@@ -12,11 +12,11 @@ export const loginByUsername = (username, password, code, randomStr) => {
   var scope = 'server'
   return request({
     url: '/auth/oauth/token',
-    headers: {
-      'Authorization': 'Basic dGFyb2NvOnRhcm9jbw=='
-    },
+    // headers: {
+    //   'Authorization': 'Basic dGFyb2NvOnRhcm9jbw=='
+    // },
     method: 'post',
-    params: { username, password, randomStr, code, 'grant_type': grantType, scope }
+    params: { username, password, randomStr, code, 'grant_type': grantType, 'client_id': 'cloud', 'client_secret': 'cloud', scope }
   })
 }
 

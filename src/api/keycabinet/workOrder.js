@@ -4,7 +4,7 @@ var basePath = 'keycabinet'
 
 export function fetchList (query) {
   return request({
-    url: basePath + '/keyDetail/page',
+    url: basePath + '/workOrder/page',
     method: 'get',
     params: query
   })
@@ -12,21 +12,21 @@ export function fetchList (query) {
 
 export function delObj (id) {
   return request({
-    url: basePath + '/keyDetail/' + id,
+    url: basePath + '/workOrder/' + id,
     method: 'delete'
   })
 }
 
 export function getObj (id) {
   return request({
-    url: basePath + '/keyDetail/' + id,
+    url: basePath + '/workOrder/' + id,
     method: 'get'
   })
 }
 
 export function putObj (obj) {
   return request({
-    url: basePath + '/keyDetail',
+    url: basePath + '/workOrder',
     method: 'put',
     data: obj
   })
@@ -34,29 +34,22 @@ export function putObj (obj) {
 
 export function addObj (obj) {
   return request({
-    url: basePath + '/keyDetail',
+    url: basePath + '/workOrder',
     method: 'post',
     data: obj
   })
 }
 
-export function listKey (cabinetCode) {
+export function jobUser (jobId) {
   return request({
-    url: basePath + '/keyDetail/keylist/' + cabinetCode,
+    url: basePath + '/workOrder/jobUser/' + jobId,
     method: 'get'
   })
 }
 
-export function syncByCabinet (cabinetCode) {
+export function shouquanByJob (jobCode) {
   return request({
-    url: basePath + '/keyDetail/sync/' + cabinetCode,
-    method: 'get'
-  })
-}
-
-export function queryuserbykey (keyCode) {
-  return request({
-    url: basePath + '/keyDetail/queryuserbykey/' + keyCode,
+    url: basePath + '/workOrder/shouquanByJob/' + jobCode,
     method: 'get'
   })
 }

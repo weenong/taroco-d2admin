@@ -41,3 +41,10 @@ export function putObj (obj) {
     data: obj
   })
 }
+
+export function userList () {
+  return request({
+    url: '/admin/user/userList',
+    method: 'get'
+  })
+}

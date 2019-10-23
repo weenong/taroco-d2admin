@@ -4,7 +4,7 @@ var basePath = 'keycabinet'
 
 export function fetchList (query) {
   return request({
-    url: basePath + '/keyCabinet/page',
+    url: basePath + '/keyRecord/page',
     method: 'get',
     params: query
   })
@@ -12,21 +12,21 @@ export function fetchList (query) {
 
 export function delObj (id) {
   return request({
-    url: basePath + '/keyCabinet/' + id,
+    url: basePath + '/keyRecord/' + id,
     method: 'delete'
   })
 }
 
 export function getObj (id) {
   return request({
-    url: basePath + '/keyCabinet/' + id,
+    url: basePath + '/keyRecord/' + id,
     method: 'get'
   })
 }
 
 export function putObj (obj) {
   return request({
-    url: basePath + '/keyCabinet',
+    url: basePath + '/keyRecord',
     method: 'put',
     data: obj
   })
@@ -34,23 +34,15 @@ export function putObj (obj) {
 
 export function addObj (obj) {
   return request({
-    url: basePath + '/keyCabinet',
+    url: basePath + '/keyRecord',
     method: 'post',
     data: obj
   })
 }
 
-export function cabinetbyplace (placeCode) {
+export function newRecord (keyDetail) {
   return request({
-    url: basePath + '/keyCabinet/listbyplace/' + placeCode,
+    url: basePath + '/keyRecord/keyRecord?keyCabinetCode=' + keyDetail.keyCabinetCode + '&code=' + keyDetail.code,
     method: 'get'
-  })
-}
-
-export function shouquanByCabinet (obj) {
-  return request({
-    url: basePath + '/keyCabinet/shouquanByCabinet',
-    method: 'post',
-    data: obj
   })
 }
