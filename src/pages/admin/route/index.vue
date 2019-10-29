@@ -4,8 +4,8 @@
     <template slot="header">
       <el-button size="mini" type="default" @click="getList" icon="el-icon-refresh">刷新</el-button>
       <div style="float: right">
-        <el-button size="mini" type="success" @click="handleApply" v-permission="['sys_route_add']" icon="el-icon-upload">同 步</el-button>
-        <el-button size="mini" type="primary" @click="handleAdd" v-permission="['sys_route_add']" icon="el-icon-plus">新 增</el-button>
+        <el-button size="mini" type="success" @click="handleApply"  icon="el-icon-upload">同 步</el-button>
+        <el-button size="mini" type="primary" @click="handleAdd"  icon="el-icon-plus">新 增</el-button>
       </div>
     </template>
     <!-- table表格 -->
@@ -47,8 +47,8 @@
       <el-table-column align="center" prop="sensitiveheadersList" label="敏感头" />
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button type="primary" v-permission="['sys_route_upd']" icon="el-icon-edit" size="mini" @click="handleEdit(scope.row,scope.index)"></el-button>
-          <el-button type="danger" v-permission="['sys_route_del']" icon="el-icon-delete" size="mini" @click="rowDel(scope.row,scope.index)"></el-button>
+          <el-button type="primary" icon="el-icon-edit" size="mini" @click="handleEdit(scope.row,scope.index)"></el-button>
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="rowDel(scope.row,scope.index)"></el-button>
         </template>
       </el-table-column>
     </el-table>

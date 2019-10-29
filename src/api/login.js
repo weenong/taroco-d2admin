@@ -13,7 +13,7 @@ export const loginByUsername = (username, password, code, randomStr) => {
   return request({
     url: '/auth/oauth/token',
     headers: {
-      'Authorization': 'Basic dGFyb2NvOnRhcm9jbw=='
+      'Authorization': 'Basic Y2xvdWQ6Y2xvdWQ='
     },
     method: 'post',
     params: { username, password, randomStr, code, 'grant_type': grantType, scope }

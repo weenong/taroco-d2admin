@@ -226,10 +226,10 @@ export default {
   },
   created () {
     this.getList()
-    this.roleManager_btn_add = this.hasPermissions(['sys_role_add'])
-    this.roleManager_btn_edit = this.hasPermissions(['sys_role_edit'])
-    this.roleManager_btn_del = this.hasPermissions(['sys_role_del'])
-    this.roleManager_btn_perm = this.hasPermissions(['sys_role_perm'])
+    this.roleManager_btn_add = true;//this.hasPermissions(['sys_role_add'])
+    this.roleManager_btn_edit = true;//this.hasPermissions(['sys_role_edit'])
+    this.roleManager_btn_del = true;//this.hasPermissions(['sys_role_del'])
+    this.roleManager_btn_perm = true;//this.hasPermissions(['sys_role_perm'])
   },
   computed: {
     ...mapGetters(['elements'])

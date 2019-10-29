@@ -3,9 +3,9 @@
     <!-- header按钮组 -->
     <template slot="header">
       <el-button-group>
-        <el-button size="mini" type="primary" v-if="menuManager_btn_add" icon="el-icon-plus" @click="handlerAdd">新 增</el-button>
-        <el-button size="mini" type="primary" v-if="menuManager_btn_edit" icon="el-icon-edit" @click="handlerEdit">编 辑</el-button>
-        <el-button size="mini" type="primary" v-if="menuManager_btn_del" icon="el-icon-delete" @click="handleDelete">删 除</el-button>
+        <el-button size="mini" type="primary"  icon="el-icon-plus" @click="handlerAdd">新 增</el-button>
+        <el-button size="mini" type="primary"  icon="el-icon-edit" @click="handlerEdit">编 辑</el-button>
+        <el-button size="mini" type="primary"  icon="el-icon-delete" @click="handleDelete">删 除</el-button>
       </el-button-group>
     </template>
     <el-row style="height:100%;">
