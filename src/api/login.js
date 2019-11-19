@@ -16,7 +16,7 @@ export const loginByUsername = (username, password, code, randomStr) => {
     //   'Authorization': 'Basic dGFyb2NvOnRhcm9jbw=='
     // },
     method: 'post',
-    params: { username, password, randomStr, code, 'grant_type': grantType, 'client_id': 'cloud', 'client_secret': 'cloud', scope }
+    params: { username, password, randomStr, code, 'grant_type': grantType, 'client_id': 'taroco', 'client_secret': 'taroco', scope }
   })
 }
 

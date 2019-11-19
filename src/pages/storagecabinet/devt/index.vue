@@ -11,7 +11,7 @@
           <el-button type="default" @click="handleFilter" icon="el-icon-search">搜 索</el-button>
         </el-form-item>
         <el-form-item style="float: right">
-          <el-button v-if="storageCabinet_add" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
+          <el-button v-if="devtDetail_add" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
         </el-form-item>
       </el-form>
     </template>
@@ -29,27 +29,32 @@
           <span>{{scope.row.id}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="编码" width="100">
+      <el-table-column align="center" label="名称" width="100">
         <template slot-scope="scope">
-          <span>{{scope.row.code}}</span>
+          <span>{{scope.row.devtName}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="名称" width="140">
+      <el-table-column align="center" label="RFID" width="100">
         <template slot-scope="scope">
-          <span>{{scope.row.name}}</span>
+          <span>{{scope.row.rfid}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="位置" width="140" show-overflow-tooltip="true">
+      <el-table-column align="center" label="柜门" width="80">
         <template slot-scope="scope">
-          <span>{{scope.row.address}}</span>
+          <span>{{scope.row.cellName}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="接口地址" width="100" show-overflow-tooltip="true">
+      <el-table-column align="center" label="物品柜" width="80">
         <template slot-scope="scope">
-          <span>{{scope.row.wsAddr}}</span>
+          <span>{{scope.row.cabinetName}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="备注" width="120" show-overflow-tooltip="true">
+      <el-table-column align="center" label="状态" width="60">
+        <template slot-scope="scope">
+          <span>{{devtState[scope.row.state]}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column align="center" label="备注" width="120" show-overflow-tooltip=true>
         <template slot-scope="scope">
           <span>{{scope.row.memo}}</span>
         </template>
@@ -59,11 +64,10 @@
           <span>{{scope.row.createTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="操作" >
+      <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button v-if="storageCabinet_upd" size="mini" type="primary" @click="handleSync(scope.row)" icon="el-icon-refresh"></el-button>
-          <el-button v-if="storageCabinet_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
-          <el-button v-if="storageCabinet_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
+          <el-button v-if="devtDetail_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+          <el-button v-if="devtDetail_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
         </template>
       </el-table-column>
 
@@ -78,27 +82,45 @@
       <el-form :model="form" :rules="rules" ref="form" label-width="80px" size="mini">
         <el-row>
           <el-col :span="12">
-            <el-form-item label="编码" prop="code">
-              <el-input v-model="form.code" disabled="true"></el-input>
+            <el-form-item label="物料名称" prop="devtCode">
+              <el-select v-model="form.devtCode" placeholder="">
+                <el-option
+                  v-for="item in devtList"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="名称" prop="name">
-              <el-input v-model="form.name" placeholder=""></el-input>
+            <el-form-item label="RFID" prop="rfid">
+              <el-input v-model="form.rfid" placeholder=""></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="24">
-            <el-form-item label="位置" prop="address">
-              <el-input v-model="form.address" placeholder=""></el-input>
+          <el-col :span="12">
+            <el-form-item label="来源" prop="source">
+              <el-input v-model="form.source" placeholder=""></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="接口地址" prop="wsAddr">
-              <el-input v-model="form.wsAddr" placeholder=""></el-input>
+          <el-col :span="12">
+            <el-form-item label="柜门" prop="cellCode">
+              <!-- <el-input v-model="form.cellCode" placeholder=""></el-input> -->
+                <el-select v-model="form.cellCode" placeholder="请选择">
+                  <el-option-group
+                    v-for="group in cellGroup"
+                    :key="group.label"
+                    :label="group.label">
+                    <el-option
+                      v-for="item in group.options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-option-group>
+                </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -120,8 +142,8 @@
 </template>
 
 <script>
-import { Loading } from 'element-ui'
-import { fetchList, getObj, addObj, putObj, delObj,syncByCabinet,syncUserFinger } from '@/api/storagecabinet/storageCabinet'
+import { fetchList, getObj, addObj, putObj, delObj, devtList } from '@/api/storagecabinet/devtDetail'
+import { cellList } from '@/api/storagecabinet/cabinetCell'
 import { mapGetters } from 'vuex'
 import ElRadioGroup from 'element-ui/packages/radio/src/radio-group'
 import ElOption from 'element-ui/packages/select/src/option'
@@ -130,9 +152,11 @@ export default {
     ElOption,
     ElRadioGroup
   },
-  name: 'table_storageCabinet',
+  name: 'table_devtDetail',
   data () {
     return {
+      devtList: null,
+      cellGroup: null,
       list: null,
       total: null,
       listLoading: true,
@@ -142,30 +166,51 @@ export default {
       },
       form: {
         id: undefined,
-        code: undefined,
-        name: undefined,
-        address: undefined,
-        wsAddr: undefined,
+        devtCode: undefined,
+        rfid: undefined,
+        cellCode: undefined,
+        prodecute: undefined,
+        source: undefined,
+        state: undefined,
         memo: undefined,
         createTime: undefined,
         updateTime: undefined,
       },
+      devtState:{
+        '1':'新件',
+        '2':'周转件',
+        '3':'报废件'
+      },
       rules: {
-        name: [
+        devtCode: [
           {
             required: true,
             message: '请输入',
             trigger: 'blur'
           }
         ],
-        address: [
+        rfid: [
           {
             required: true,
             message: '请输入',
             trigger: 'blur'
           }
         ],
-        wsAddr: [
+        cellCode: [
+          {
+            required: true,
+            message: '请输入',
+            trigger: 'blur'
+          }
+        ],
+        prodecute: [
+          {
+            required: true,
+            message: '请输入',
+            trigger: 'blur'
+          }
+        ],
+        state: [
           {
             required: true,
             message: '请输入',
@@ -188,9 +233,9 @@ export default {
   },
   created () {
     this.getList()
-    this.storageCabinet_add = this.hasFunctions(['storageCabinet_add'])
-    this.storageCabinet_upd = this.hasFunctions(['storageCabinet_upd'])
-    this.storageCabinet_del = this.hasFunctions(['storageCabinet_del'])
+    this.devtDetail_add = this.hasFunctions(['devtDetail_add'])
+    this.devtDetail_upd = this.hasFunctions(['devtDetail_upd'])
+    this.devtDetail_del = this.hasFunctions(['devtDetail_del'])
   },
   methods: {
     getList () {
@@ -200,6 +245,12 @@ export default {
         this.list = response.records
         this.total = response.total
         this.listLoading = false
+      })
+      cellList().then(response =>{
+        this.cellGroup = response.result
+      })
+      devtList().then(response =>{
+        this.devtList = response.result
       })
     },
     handleFilter () {
@@ -226,26 +277,10 @@ export default {
         this.dialogStatus = 'update'
       })
     },
-
-    handleSync (row) {
-      let loadingInstance = Loading.service({ fullscreen: true })
-      syncUserFinger(row.code).then(response=>{
-        this.$notify({title: '成功', message: '同步成功', type: 'success', duration: 2000})
-        this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
-          loadingInstance.close();
-        });
-      })
-      // syncByCabinet(row).then(response => {
-      //   this.$notify({title: '成功', message: '同步成功', type: 'success', duration: 2000})
-      //   this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
-      //     loadingInstance.close();
-      //   });
-        
-      // })
-    }, 
     create (formName) {
       const set = this.$refs
       this.form.role = this.role
+      this.form.state = 1
       set[formName].validate(valid => {
         if (valid) {
           addObj(this.form).then(() => {
@@ -292,7 +327,7 @@ export default {
     deletes (row) {
       this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning'})
       .then(() => {
-        delObj(row.code)
+        delObj(row.id)
         .then(() => {
           this.getList()
           this.$notify({title: '成功', message: '删除成功', type: 'success', duration: 2000})
@@ -305,10 +340,12 @@ export default {
     resetTemp () {
       this.form = {
         id: undefined,
-        code: undefined,
-        name: undefined,
-        address: undefined,
-        wsAddr: undefined,
+        devtCode: undefined,
+        rfid: undefined,
+        cellCode: undefined,
+        prodecute: undefined,
+        source: undefined,
+        state: undefined,
         memo: undefined,
         createTime: undefined,
         updateTime: undefined,

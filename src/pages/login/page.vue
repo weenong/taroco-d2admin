@@ -12,7 +12,7 @@
       <img class="login-img" src="./image/login.png">
       <div class="login-logo">
         <i class="iconfont icon-key-wisdom"></i>
-        <h1>智能钥匙管理系统</h1>
+        <h1>{{title}}</h1>
       </div>
       <div class="form-group">
         <el-card>
@@ -69,6 +69,7 @@ import * as sysService from "@/api/sys/sys";
 export default {
   data() {
     return {
+      title: '',
       // 快速选择用户
       dialogVisible: false,
       users: [
@@ -107,6 +108,7 @@ export default {
   mounted() {
     // 初始化例子插件
     // particlesJS("login", config);
+    this.title = process.env.VUE_APP_TITLE
   },
   beforeDestroy() {
     // 销毁 particlesJS

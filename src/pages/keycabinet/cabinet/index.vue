@@ -39,7 +39,7 @@
           <span>{{scope.row.name}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="区域" width="100">
+      <el-table-column align="center" label="区域" >
         <template slot-scope="scope">
           <span>{{scope.row.placeName}}</span>
         </template>
@@ -180,6 +180,28 @@
       </div>
     </el-dialog>
     <el-dialog title="授权" :visible.sync="shouquanFormVisible" width="600px">
+      <div>
+        <el-form size="mini">
+          <el-form-item label="类型" prop="isTemp">
+            <el-radio-group v-model="isTemp">
+              <el-radio :label="0">长期</el-radio>
+              <el-radio :label="1">临时</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="时间" v-if="isTemp == 1">
+                <el-date-picker
+                  v-model="timeRange"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  format="yyyy年MM月dd日"
+                  value-format="yyyy-MM-dd">
+                </el-date-picker>
+          </el-form-item>
+        </el-form>
+        
+      </div>
       <div class="el-dialog-div">
         <el-table :key='tableKey'
               :data="userList"
@@ -235,7 +257,7 @@
 
 <script>
 import { Loading } from 'element-ui'
-import { fetchList, getObj, addObj, putObj, delObj,shouquanByCabinet } from '@/api/keycabinet/keyCabinet'
+import { fetchList, getObj, addObj, putObj, delObj,shouquanByCabinet ,syncUserFinger} from '@/api/keycabinet/keyCabinet'
 import * as keyDetailApi from '@/api/keycabinet/keyDetail'
 import * as userApi from '@/api/user'
 import {newRecord} from '@/api/keycabinet/keyRecord'
@@ -251,6 +273,8 @@ export default {
   name: 'table_keyCabinet',
   data () {
     return {
+      isTemp: 0,
+      timeRange: null,
       userList: null,
       userTotal: null,
       shouquanFormVisible: null,
@@ -304,42 +328,7 @@ export default {
             message: '请输入',
             trigger: 'blur'
           }
-        ],
-        ip: [
-          {
-            required: true,
-            message: '请输入',
-            trigger: 'blur'
-          }
-        ],
-        port: [
-          {
-            required: true,
-            message: '请输入',
-            trigger: 'blur'
-          }
-        ],
-        memo: [
-          {
-            required: true,
-            message: '请输入',
-            trigger: 'blur'
-          }
-        ],
-        createTime: [
-          {
-            required: true,
-            message: '请输入',
-            trigger: 'blur'
-          }
-        ],
-        updateTime: [
-          {
-            required: true,
-            message: '请输入',
-            trigger: 'blur'
-          }
-        ],
+        ]
       },
       dialogFormVisible: false,
       dialogDetailVisible: false,
@@ -369,7 +358,7 @@ export default {
         this.recordList = response.result
       })
       this.dynamicTags = []
-      keyDetailApi.queryuserbykey(key.code).then(response =>{
+      keyDetailApi.queryuserbykey(key.code,key.keyCabinetCode).then(response =>{
         let _this = this
         response.result.forEach(function(item){
           _this.dynamicTags.push(item.username)
@@ -442,13 +431,22 @@ export default {
     },
     handleSync (row) {
       let loadingInstance = Loading.service({ fullscreen: true })
-      keyDetailApi.syncByCabinet(row.code).then(response => {
+      syncUserFinger(row.code).then(response=>{
         this.$notify({title: '成功', message: '同步成功', type: 'success', duration: 2000})
         this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
           loadingInstance.close();
         });
-        
       })
+
+      // let loadingInstance = Loading.service({ fullscreen: true })
+      // keyDetailApi.syncByCabinet(row.code).then(response => {
+      //   this.$notify({title: '成功', message: '同步成功', type: 'success', duration: 2000})
+      //   this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
+      //     loadingInstance.close();
+      //   });
+        
+      // })
+
     },
     handleShouquan (row) {
       getObj(row.id).then(response => {
@@ -465,9 +463,13 @@ export default {
     shouquan () {
       let cabinetCode = this.form.code
       let users = this.$refs.userTable.selection
-      console.log(cabinetCode)
-      console.log(users)
+      
       let param = {}
+      param.isTemp = this.isTemp
+      if(this.isTemp == 1){
+        param.startTime = this.timeRange[0]
+        param.endTime = this.timeRange[1]
+      }
       param.cabinetCode = cabinetCode
       param.userList = users
 

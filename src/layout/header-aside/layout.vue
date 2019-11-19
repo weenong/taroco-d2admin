@@ -17,7 +17,7 @@
         flex>
         <div class="logo-index">
           <i class="iconfont icon-key-wisdom"></i>
-          <p>智能钥匙</p>
+          <p>智能管理</p>
         </div>
         <div class="logo-group" v-show="false" :style="{width: asideCollapse ? asideWidthCollapse : asideWidth}" flex-box="0">
           <div  v-if="asideCollapse" class="logo-index  no">
@@ -25,7 +25,7 @@
           </div>
           <div  v-else class="logo-index">
             <i class="iconfont icon-key-wisdom"></i>
-            <p>智能钥匙</p>
+            <p>智能管理</p>
           </div>
           <!--<img v-if="asideCollapse" :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/icon-only.png`">-->
           <!--<img v-else :src="`${$baseUrl}image/theme/${themeActiveSetting.name}/logo/all.png`">-->

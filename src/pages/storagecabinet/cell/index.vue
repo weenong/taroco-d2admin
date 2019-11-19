@@ -10,9 +10,9 @@
         <el-form-item>
           <el-button type="default" @click="handleFilter" icon="el-icon-search">搜 索</el-button>
         </el-form-item>
-        <!-- <el-form-item style="float: right">
-          <el-button v-if="keyDetail_add" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
-        </el-form-item> -->
+        <el-form-item style="float: right">
+          <!-- <el-button v-if="cabinetCell_add" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button> -->
+        </el-form-item>
       </el-form>
     </template>
     <!-- table表格 -->
@@ -24,51 +24,52 @@
       highlight-current-row
       stripe
       style="width: 100%">
-      <el-table-column align="center" label="序号">
+      <el-table-column align="center" label="序号" width="60">
         <template slot-scope="scope">
           <span>{{scope.row.id}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="钥匙柜" width="100" show-overflow-tooltip>
+      <el-table-column align="center" label="物品柜" width="100" show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <span>{{scope.row.keyCabinetName}}</span>
+          <span>{{scope.row.cabinetName}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="钥匙编码">
+      <el-table-column align="center" label="柜门编号" width="60">
         <template slot-scope="scope">
-          <span>{{scope.row.code}}</span>
+          <span>{{scope.row.cellCode}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="名称" width="100" show-overflow-tooltip>
+      <el-table-column align="center" label="柜门名称" width="100" show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <span>{{scope.row.name}}</span>
+          <span>{{scope.row.cellName}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="用途" width="100" show-overflow-tooltip >
+      <el-table-column align="center" label="物料名称" width="100" show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <span>{{scope.row.ability}}</span>
+          <span>{{scope.row.devtName}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="位置" width="100">
+      <el-table-column align="center" label="物料数量">
         <template slot-scope="scope">
-          <span>{{scope.row.locRow}}-{{scope.row.locCol}}</span>
+          <span>{{scope.row.devtNum}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="备注" width="100" show-overflow-tooltip>
+      <el-table-column align="center" label="备注" width="120" show-overflow-tooltip="true">
         <template slot-scope="scope">
           <span>{{scope.row.memo}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="创建时间" width="150">
+      <el-table-column align="center" label="创建时间">
         <template slot-scope="scope">
-          <span>{{scope.row.createTime|parseTime('{y}-{m}-{d}')}}</span>
+          <span>{{scope.row.createTime}}</span>
         </template>
       </el-table-column>
+      
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button v-if="keyDetail_upd" size="mini" type="primary" @click="handleShouquan(scope.row)" icon="el-icon-link"></el-button>
-          <el-button v-if="keyDetail_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
-          <!-- <el-button v-if="keyDetail_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button> -->
+          <el-button size="mini" type="primary" @click="handleShouquan(scope.row)" icon="el-icon-link"></el-button>
+          <el-button v-if="cabinetCell_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+          <!-- <el-button v-if="cabinetCell_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button> -->
         </template>
       </el-table-column>
 
@@ -78,6 +79,48 @@
       <el-pagination background @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="listQuery.page" :page-sizes="[10,20,30,50]" :page-size="listQuery.limit" layout="total, sizes, prev, pager, next, jumper" :total="total" style="margin: -10px;">
       </el-pagination>
     </template>
+    <!-- 新增弹框 -->
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="600px">
+      <el-form :model="form" :rules="rules" ref="form" label-width="80px" size="mini">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="柜门编号" prop="cellCode">
+              <el-input v-model="form.cellCode" disabled="true"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="柜门名称" prop="cellName">
+              <el-input v-model="form.cellName" ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="物料编码" prop="devtCode">
+              <el-input v-model="form.devtCode" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="数量" prop="devtNum">
+              <el-input v-model="form.devtNum" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col>
+            <el-form-item label="备注" prop="memo">
+              <el-input v-model="form.memo" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+          
+        </el-row>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancel('form')" icon="el-icon-close" size="mini">取 消</el-button>
+        <el-button v-if="dialogStatus=='create'" type="primary" @click="create('form')" icon="el-icon-check" size="mini">确 定</el-button>
+        <el-button v-else type="primary" @click="update('form')" icon="el-icon-check" size="mini">修 改</el-button>
+      </div>
+    </el-dialog>
     <el-dialog title="授权" :visible.sync="shouquanFormVisible" width="600px">
       <div>
         <el-form size="mini">
@@ -106,7 +149,7 @@
               :data="userList"
               ref="userTable"
               size="mini">
-              style="width:100%">
+              style="width: 100%">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column align="center" label="用户名">
             <template slot-scope="scope">
@@ -150,71 +193,12 @@
         <el-button @click="cancelshouquan()" icon="el-icon-close" size="mini">取 消</el-button>
         <el-button type="primary" @click="shouquan()" icon="el-icon-check" size="mini">授 权</el-button>
       </div>
-    </el-dialog>
-    <!-- 新增弹框 -->
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" width="600px">
-      <div class="el-dialog-div">
-        <el-form :model="form" :rules="rules" ref="form" label-width="80px" size="mini">
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="编码" prop="code">
-                <el-input v-model="form.code" disabled></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="名称" prop="name">
-                <el-input v-model="form.name" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12">
-              <el-form-item label="钥匙柜" prop="keyCabinetCode">
-                <el-select v-model="form.keyCabinetCode" value-key="code" placeholder="请选择" collapse-tags style="width:100%;">
-                  <el-option v-for="item in keyCabinetList" :key="item.code" :label="item.name" :value="item.code" >
-                    <span style="float: left">{{ item.name }}</span>
-                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="行:列" prop="locRow">
-                <el-input-number style="width:90px;" v-model="form.locRow" :min="1" :max="10" disabled></el-input-number>
-                :
-                <el-input-number style="width:90px;" v-model="form.locCol" :min="1" :max="10" disabled></el-input-number>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="用途" prop="ability">
-                <el-input v-model="form.ability" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="备注" prop="memo">
-                <el-input v-model="form.memo" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          
-        </el-form>
-      </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancel('form')" icon="el-icon-close" size="mini">取 消</el-button>
-        <el-button v-if="dialogStatus=='create'" type="primary" @click="create('form')" icon="el-icon-check" size="mini">确 定</el-button>
-        <el-button v-else type="primary" @click="update('form')" icon="el-icon-check" size="mini">修 改</el-button>
-      </div>
-    </el-dialog>
+    </el-dialog>    
   </d2-container>
 </template>
 
 <script>
-import { fetchList, getObj, addObj, putObj, delObj, shouquanByKeyDetail } from '@/api/keycabinet/keyDetail'
-import * as keyCabinetService from '@/api/keycabinet/keyCabinet'
+import { fetchList, getObj, addObj, putObj, delObj,shouquanByCell } from '@/api/storagecabinet/cabinetCell'
 import * as userApi from '@/api/user'
 import { mapGetters } from 'vuex'
 import ElRadioGroup from 'element-ui/packages/radio/src/radio-group'
@@ -224,14 +208,14 @@ export default {
     ElOption,
     ElRadioGroup
   },
-  name: 'table_keyDetail',
+  name: 'table_cabinetCell',
   data () {
     return {
-      isTemp: 0,
       timeRange: null,
+      isTemp: 0,
       userList: null,
       userTotal: null,
-      keyCabinetList: null,
+      shouquanFormVisible: null,
       list: null,
       total: null,
       listLoading: true,
@@ -245,39 +229,19 @@ export default {
       },      
       form: {
         id: undefined,
-        keyCabinetCode: undefined,
-        code: undefined,
-        name: undefined,
-        ability: undefined,
-        locRow: undefined,
-        locCol: undefined,
+        cabinetCode: undefined,
+        cabinetName: undefined,
+        wsAddr: undefined,
+        cellCode: undefined,
+        cellName: undefined,
+        devtCode: undefined,
+        devtNum: undefined,
         memo: undefined,
         createTime: undefined,
         updateTime: undefined,
       },
       rules: {
-        id: [
-          {
-            required: true,
-            message: '请输入',
-            trigger: 'blur'
-          }
-        ],
-        keyCabinetCode: [
-          {
-            required: true,
-            message: '请选择',
-            trigger: 'blur'
-          }
-        ],
-        code: [
-          {
-            required: true,
-            message: '请输入',
-            trigger: 'blur'
-          }
-        ],
-        name: [
+        cellName: [
           {
             required: true,
             message: '请输入',
@@ -286,7 +250,6 @@ export default {
         ]
       },
       dialogFormVisible: false,
-      shouquanFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
@@ -298,20 +261,12 @@ export default {
   computed: {
   },
   filters: {
-    statusFilter (status) {
-      const statusMap = {
-        0: '有效',
-        1: '无效',
-        9: '锁定'
-      }
-      return statusMap[status]
-    }
   },
   created () {
     this.getList()
-    this.keyDetail_add = this.hasFunctions(['keyDetail_add'])
-    this.keyDetail_upd = this.hasFunctions(['keyDetail_upd'])
-    this.keyDetail_del = this.hasFunctions(['keyDetail_del'])
+    this.cabinetCell_add = this.hasFunctions(['cabinetCell_add'])
+    this.cabinetCell_upd = this.hasFunctions(['cabinetCell_upd'])
+    this.cabinetCell_del = this.hasFunctions(['cabinetCell_del'])
   },
   methods: {
     getList () {
@@ -351,27 +306,14 @@ export default {
     },
     handleCreate () {
       this.resetTemp()
-      let param = {}
-      param.page = 1
-      param.limit = 1000
-      keyCabinetService.fetchList(param).then(response => {
-        this.keyCabinetList = response.records
-        this.dialogStatus = 'create'
-        this.dialogFormVisible = true
-      })
+      this.dialogStatus = 'create'
+      this.dialogFormVisible = true
     },
     handleUpdate (row) {
       getObj(row.id).then(response => {
         this.form = response
-        let param = {}
-        param.page = 1
-        param.limit = 1000
-        keyCabinetService.fetchList(param).then(response => {
-          this.keyCabinetList = response.records
-          this.dialogFormVisible = true
-          this.dialogStatus = 'update'
-   
-        })
+        this.dialogFormVisible = true
+        this.dialogStatus = 'update'
       })
     },
     handleShouquan (row) {
@@ -387,20 +329,21 @@ export default {
       })
     },
     shouquan () {
-      let keyDetailCode = this.form.code
-      let cabinetCode = this.form.keyCabinetCode
+      let cabinetCode = this.form.cabinetCode
+      let cellCode = this.form.cellCode
       let users = this.$refs.userTable.selection
+ 
       let param = {}
       param.isTemp = this.isTemp
-      if(this.isTemp == 1){
+      if(param.isTemp == 1){
         param.startTime = this.timeRange[0]
         param.endTime = this.timeRange[1]
       }
-      param.keyDetailCode = keyDetailCode
       param.cabinetCode = cabinetCode
+      param.cellCode = cellCode
       param.userList = users
-
-      shouquanByKeyDetail(param).then(response =>{
+console.log(param)
+      shouquanByCell(param).then(response =>{
         this.shouquanFormVisible = false
       })
       
@@ -438,26 +381,15 @@ export default {
       set[formName].validate(valid => {
         if (valid) {
           this.dialogFormVisible = false
-          this.form.password = undefined
-          putObj(this.form).then(response => {
-            if(response.result){
-              this.dialogFormVisible = false
-              this.getList()
-              this.$notify({
-                title: '成功',
-                message: '修改成功',
-                type: 'success',
-                duration: 2000
-              })
-            }else{
-              this.$notify({
-                title: '失败',
-                message: '修改失败',
-                type: 'info',
-                duration: 2000
-              })
-            }
-            
+          putObj(this.form).then(() => {
+            this.dialogFormVisible = false
+            this.getList()
+            this.$notify({
+              title: '成功',
+              message: '修改成功',
+              type: 'success',
+              duration: 2000
+            })
           })
         } else {
           return false
@@ -480,12 +412,13 @@ export default {
     resetTemp () {
       this.form = {
         id: undefined,
-        keyCabinetCode: undefined,
-        code: undefined,
-        name: undefined,
-        ability: undefined,
-        locRow: undefined,
-        locCol: undefined,
+        cabinetCode: undefined,
+        cabinetName: undefined,
+        wsAddr: undefined,
+        cellCode: undefined,
+        cellName: undefined,
+        devtCode: undefined,
+        devtNum: undefined,
         memo: undefined,
         createTime: undefined,
         updateTime: undefined,
@@ -499,5 +432,4 @@ export default {
     height: 40vh;
     overflow: auto;
   }
-
 </style>

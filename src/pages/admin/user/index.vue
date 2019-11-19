@@ -18,6 +18,9 @@
           <el-form-item style="float: right">
             <el-button v-if="sys_user_add" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
           </el-form-item>
+          <el-form-item style="float: right">
+            <el-button v-if="sys_user_add" @click="handleSync" type="primary" icon="el-icon-refresh">同 步</el-button>
+          </el-form-item>
       </el-form>
     </template>
     <!-- table表格 -->
@@ -196,11 +199,33 @@
         <el-button v-else type="primary" @click="update('form')" icon="el-icon-check" size="mini">修 改</el-button>
       </div>
     </el-dialog>
+    <el-dialog
+      title="同步"
+      :visible.sync="syncDialogVisible"
+      width="30%">
+      <el-form>
+        <el-form-item label="选择物品柜" >
+              <el-select v-model="cabinetCode" placeholder="">
+                <el-option
+                  v-for="item in cabinetList"
+                  :key="item.code"
+                  :label="item.name"
+                  :value="item.code">
+                </el-option>
+              </el-select>
+            </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="syncDialogVisible = false" size="mini">取 消</el-button>
+        <el-button type="primary" @click="sync()" size="mini">确 定</el-button>
+      </span>
+    </el-dialog>
   </d2-container>
 </template>
 
 <script>
 import { fetchList, getObj, addObj, putObj, delObj } from '@/api/user'
+import { getCabinetList,syncUser } from '@/api/storagecabinet/storageCabinet'
 import { deptRoleList, fetchDeptTree } from '@/api/role'
 import { mapGetters, mapState } from 'vuex'
 import ElRadioGroup from 'element-ui/packages/radio/src/radio-group'
@@ -218,6 +243,9 @@ export default {
   name: 'table_user',
   data () {
     return {
+      cabinetCode: null,
+      cabinetList: [],
+      syncDialogVisible: false,
       isLoading: false,
       treeDeptData: [],
       checkedKeys: [],
@@ -369,13 +397,24 @@ export default {
       this.listQuery.page = val
       this.getList()
     },
+    handleSync () {
+      getCabinetList().then(response => {
+        this.cabinetList = response.result
+        this.syncDialogVisible = true
+      })
+    },
+    sync() {
+      console.log(this.cabinetCode)
+      let param ={}
+      param.cabinetCode = this.cabinetCode
+      syncUser(param).then(response =>{
+        this.syncDialogVisible = false
+      })
+    },
     handleCreate () {
       this.resetTemp()
       this.dialogStatus = 'create'
       this.dialogFormVisible = true
-      // deptRoleList(this.info.deptId).then(response => {
-      //   this.rolesOptions = response.data
-      // })
     },
     handleUpdate (row) {
       getObj(row.userId).then(response => {

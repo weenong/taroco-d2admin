@@ -54,3 +54,10 @@ export function shouquanByCabinet (obj) {
     data: obj
   })
 }
+
+export function syncUserFinger (cabinetCode) {
+  return request({
+    url: basePath + '/keyCabinet/syncUserFinger/' + cabinetCode,
+    method: 'post'
+  })
+}

@@ -1,6 +1,6 @@
 import request from '@/plugin/axios'
 
-var basePath = 'business'
+var basePath = '/storagecabinet'
 
 export function fetchList (query) {
   return request({
@@ -39,3 +39,34 @@ export function addObj (obj) {
     data: obj
   })
 }
+
+export function syncByCabinet (obj) {
+  return request({
+    url: basePath + '/storageCabinet/syncByCabinet',
+    method: 'post',
+    data: obj
+  })
+}
+
+export function getCabinetList () {
+  return request({
+    url: basePath + '/storageCabinet/list',
+    method: 'get'
+  })
+}
+
+export function syncUser (obj) {
+  return request({
+    url: basePath + '/user/sync',
+    method: 'post',
+    data: obj 
+  })
+}
+
+export function syncUserFinger (cabinetCode) {
+  return request({
+    url: basePath + '/storageCabinet/syncUserFinger/' + cabinetCode,
+    method: 'post'
+  })
+}
+

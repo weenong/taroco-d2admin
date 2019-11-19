@@ -54,9 +54,17 @@ export function syncByCabinet (cabinetCode) {
   })
 }
 
-export function queryuserbykey (keyCode) {
+export function queryuserbykey (keyCode,cabinetCode) {
   return request({
-    url: basePath + '/keyDetail/queryuserbykey/' + keyCode,
+    url: basePath + '/keyDetail/queryuserbykey/' + keyCode + '/' + cabinetCode,
     method: 'get'
+  })
+}
+
+export function shouquanByKeyDetail (obj) {
+  return request({
+    url: basePath + '/keyDetail/shouquanByKeyDetail',
+    method: 'post',
+    data: obj
   })
 }

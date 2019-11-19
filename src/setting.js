@@ -37,6 +37,11 @@ export default {
   theme: {
     list: [
       {
+        title: '蓝色',
+        name: 'metro',
+        preview: 'image/theme/metro/preview@2x.png'
+      },
+      {
         title: 'd2admin 经典',
         name: 'd2',
         preview: 'image/theme/d2/preview@2x.png'
@@ -62,11 +67,6 @@ export default {
         title: 'Tomorrow Night Blue (vsCode)',
         name: 'tomorrow-night-blue',
         preview: 'image/theme/tomorrow-night-blue/preview@2x.png'
-      },
-      {
-        title: '蓝色',
-        name: 'metro',
-        preview: 'image/theme/metro/preview@2x.png'
       }
     ]
   },
