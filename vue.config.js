@@ -8,7 +8,13 @@ module.exports = {
   baseUrl: baseUrl, // 根据你的实际情况更改这里
   lintOnSave: false,
   devServer: {
-    publicPath: baseUrl // 和 baseUrl 保持一致
+    publicPath: baseUrl, // 和 baseUrl 保持一致
+    proxy: {
+      '/demo/': {
+        target: 'http://localhost:10000/',
+        changeOrigin: true
+      }
+    }
   },
   css: {
     loaderOptions: {
