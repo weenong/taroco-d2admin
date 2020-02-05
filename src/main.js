@@ -19,6 +19,8 @@ import SplitPane from 'vue-splitpane'
 import router from './router'
 // 全局filter
 import * as filters from './filters'
+
+import { online } from '@/api/keycabinet/keyCabinet'
 // 核心插件
 Vue.use(d2Admin, { store })
 
@@ -33,10 +35,36 @@ new Vue({
   store,
   i18n,
   render: h => h(App),
-  created() {
-
+  created () {
+    setInterval(() => {
+      online().then(response => {
+        if (response.status === 'SUCCEED') {
+          let result = response.result
+          let keys = Object.keys(result)
+          let msg = ''
+          let show = false
+          keys.forEach(key => {
+            if (result[key] == null) {
+              show = true
+              msg += key + '离线<br/>'
+            }
+          })
+          if (show) {
+            let file = '/12146.mp3'
+            let mp3 = new Audio(file)
+            mp3.play()
+            this.$notify({
+              title: '警告',
+              dangerouslyUseHTMLString: true,
+              message: msg,
+              type: 'warning'
+            })
+          }
+        }
+      })
+    }, 120000)
   },
-  mounted() {
+  mounted () {
     console.log('main mounted')
     // 展示系统信息
     this.$store.commit('d2admin/releases/versionShow')

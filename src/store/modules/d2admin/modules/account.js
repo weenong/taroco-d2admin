@@ -19,7 +19,7 @@ export default {
       code,
       randomStr,
       route = {
-        name: 'index'
+        path: 'index'
       }
     }) {
       // 开始请求登录接口
@@ -46,7 +46,7 @@ export default {
           // 更新路由 尝试去获取 cookie 里保存的需要重定向的页面完整地址
           const path = util.cookies.get('redirect')
           // 根据是否存有重定向页面判断如何重定向
-          vm.$router.replace(path ? { path } : route)
+          vm.$router.push(path ? { path } : route)
           // 删除 cookie 中保存的重定向页面
           util.cookies.remove('redirect')
         })

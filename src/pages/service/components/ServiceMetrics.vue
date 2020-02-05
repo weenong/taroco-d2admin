@@ -53,7 +53,7 @@ export default {
         method: 'get'
       })
         .then((res) => {
-          let data = res.data
+          let data = res
           this.metrics = data.names
         })
     },
@@ -67,7 +67,7 @@ export default {
             method: 'get'
           })
             .then((res) => {
-              this.selected.push(res.data)
+              this.selected.push(res)
             })
         })
       }
@@ -79,7 +79,7 @@ export default {
         method: 'get'
       })
         .then((res) => {
-          let data = res.data
+          let data = res
           this.commonValue = data.measurements[0].statistic +': ' + data.measurements[0].value + (data.baseUnit ? '/' + data.baseUnit : '')
         })
     }

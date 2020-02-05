@@ -3,8 +3,12 @@
     <!-- header 查询条件 -->
     <template slot="header">
       <el-form :inline="true" :model="listQuery" size="mini" style="margin-bottom: -18px;">
-        <el-form-item label="查询条件">
-          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="" v-model="listQuery.id" clearable>
+        <el-form-item label="名称">
+          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="" v-model="listQuery.name" clearable>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="位置">
+          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="" v-model="listQuery.address" clearable>
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -24,12 +28,12 @@
       highlight-current-row
       stripe
       style="width: 100%">
-      <el-table-column align="center" label="序号" width="60">
-        <template slot-scope="scope">
+      <el-table-column align="center" type="index" label="序号" width="60">
+        <!-- <template slot-scope="scope">
           <span>{{scope.row.id}}</span>
-        </template>
+        </template> -->
       </el-table-column>
-      <el-table-column align="center" label="编码" width="100">
+      <el-table-column align="center" label="编码" width="60">
         <template slot-scope="scope">
           <span>{{scope.row.code}}</span>
         </template>
@@ -54,16 +58,25 @@
           <span>{{scope.row.memo}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="创建时间" >
+      <el-table-column align="center" label="创建时间" width="120" show-overflow-tooltip="true">
         <template slot-scope="scope">
-          <span>{{scope.row.createTime}}</span>
+          <span>{{scope.row.createTime|parseTime('{y}-{m}-{d}')}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作" >
         <template slot-scope="scope">
-          <el-button v-if="storageCabinet_upd" size="mini" type="primary" @click="handleSync(scope.row)" icon="el-icon-refresh"></el-button>
-          <el-button v-if="storageCabinet_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
-          <el-button v-if="storageCabinet_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
+          <el-tooltip content="同步用户">
+            <el-button v-if="storageCabinet_upd" size="mini" type="primary" @click="handleSyncUser(scope.row)" icon="el-icon-user"></el-button>
+           </el-tooltip>
+          <!-- <el-tooltip content="同步指纹"> 
+            <el-button v-if="storageCabinet_upd" size="mini" type="primary" @click="handleSync(scope.row)" icon="el-icon-check"></el-button>
+          </el-tooltip> -->
+          <el-tooltip content="修改">
+            <el-button v-if="storageCabinet_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+          </el-tooltip>
+          <el-tooltip content="删除">
+            <el-button v-if="storageCabinet_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
+          </el-tooltip>
         </template>
       </el-table-column>
 
@@ -121,7 +134,7 @@
 
 <script>
 import { Loading } from 'element-ui'
-import { fetchList, getObj, addObj, putObj, delObj,syncByCabinet,syncUserFinger } from '@/api/storagecabinet/storageCabinet'
+import { fetchList, getObj, addObj, putObj, delObj,syncByCabinet,syncUserFinger,syncUser } from '@/api/storagecabinet/storageCabinet'
 import { mapGetters } from 'vuex'
 import ElRadioGroup from 'element-ui/packages/radio/src/radio-group'
 import ElOption from 'element-ui/packages/select/src/option'
@@ -226,7 +239,6 @@ export default {
         this.dialogStatus = 'update'
       })
     },
-
     handleSync (row) {
       let loadingInstance = Loading.service({ fullscreen: true })
       syncUserFinger(row.code).then(response=>{
@@ -235,13 +247,15 @@ export default {
           loadingInstance.close();
         });
       })
-      // syncByCabinet(row).then(response => {
-      //   this.$notify({title: '成功', message: '同步成功', type: 'success', duration: 2000})
-      //   this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
-      //     loadingInstance.close();
-      //   });
-        
-      // })
+    }, 
+    handleSyncUser (row) {
+      let loadingInstance = Loading.service({ fullscreen: true })
+      syncUser(row.code).then(response=>{
+        this.$notify({title: '成功', message: '同步成功', type: 'success', duration: 2000})
+        this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
+          loadingInstance.close();
+        });
+      })
     }, 
     create (formName) {
       const set = this.$refs

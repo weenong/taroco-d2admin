@@ -69,7 +69,7 @@ export default {
         method: 'get'
       })
         .then((res) => {
-          let data = res.data
+          let data = res
           let rows = []
           this.loggersTotal = 0
           this.hasMore = true

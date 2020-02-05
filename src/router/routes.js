@@ -45,6 +45,38 @@ const frameIn = [
         }
       }
     ]
+  },
+  // {
+  //   path: '/myiframe',
+  //   redirect: '/myiframe',
+  //   component: layoutHeaderAside,
+  //   children: [
+  //     {
+  //       path: ':routerPath',
+  //       name: 'iframe',
+  //       meta: {
+  //         requiresAuth: true,
+  //         title: 'iframe'
+  //       },
+  //       component: () => import('@/pages/iframe')
+  //     }
+  //   ]
+  // },
+  {
+    path: '/service',
+    redirect: '/service/info',
+    component: layoutHeaderAside,
+    children: [
+      {
+        path: 'info',
+        name: 'serviceInfo',
+        meta: {
+          requiresAuth: true,
+          title: '服务详情'
+        },
+        component: () => import('@/pages/service/ServiceDetail')
+      }
+    ]
   }
   // ,demo
 ]
@@ -58,6 +90,11 @@ const frameOut = [
     path: '/login',
     name: 'login',
     component: () => import('@/pages/login')
+  },
+  {
+    path: '/toindex',
+    name: 'toindex',
+    component: () => import('@/pages/login/toindex')
   }
 ]
 

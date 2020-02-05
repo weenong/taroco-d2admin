@@ -69,7 +69,7 @@ export default {
         url: url,
         method: 'get'
       }).then((res) => {
-        let data = res.data
+        let data = res
         if (data.status === 'SUCCEED') {
           data.result.forEach(app => {
             app.up = 0

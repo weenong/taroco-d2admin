@@ -3,16 +3,20 @@
     <!-- header 查询条件 -->
     <template slot="header">
       <el-form :inline="true" :model="listQuery" size="mini" style="margin-bottom: -18px;">
-        <el-form-item label="查询条件">
-          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="" v-model="listQuery.id" clearable>
-          </el-input>
+        <el-form-item label="钥匙柜">
+          <el-select v-model="listQuery.keyCabinetCode" value-key="code" placeholder="请选择" collapse-tags style="width:100%;">
+            <el-option v-for="item in keyCabinetList" :key="item.code" :label="item.name" :value="item.code" >
+              <span style="float: left">{{ item.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="default" @click="handleFilter" icon="el-icon-search">搜 索</el-button>
         </el-form-item>
-        <!-- <el-form-item style="float: right">
-          <el-button v-if="keyDetail_add" @click="handleCreate" type="primary" icon="el-icon-plus">新 增</el-button>
-        </el-form-item> -->
+        <el-form-item style="float: right">
+          <el-button v-if="keyDetail_add" @click="handleShouquanBatch" type="primary" icon="el-icon-link">授 权</el-button>
+        </el-form-item>
       </el-form>
     </template>
     <!-- table表格 -->
@@ -23,11 +27,16 @@
       element-loading-text="拼命加载中..."
       highlight-current-row
       stripe
+      @selection-change="handleKeySelectionChange" 
       style="width: 100%">
-      <el-table-column align="center" label="序号">
-        <template slot-scope="scope">
+      <el-table-column
+        type="selection"
+        width="55">
+      </el-table-column>
+      <el-table-column align="center" type="index" label="序号">
+        <!-- <template slot-scope="scope">
           <span>{{scope.row.id}}</span>
-        </template>
+        </template> -->
       </el-table-column>
       <el-table-column align="center" label="钥匙柜" width="100" show-overflow-tooltip>
         <template slot-scope="scope">
@@ -66,8 +75,13 @@
       </el-table-column>
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button v-if="keyDetail_upd" size="mini" type="primary" @click="handleShouquan(scope.row)" icon="el-icon-link"></el-button>
-          <el-button v-if="keyDetail_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+          <!-- <el-tooltip content="授权">
+            <el-button v-if="keyDetail_upd" size="mini" type="primary" @click="handleShouquan(scope.row)" icon="el-icon-link"></el-button>
+          </el-tooltip> -->
+          <el-tooltip content="修改">
+            <el-button v-if="keyDetail_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+          </el-tooltip>
+          
           <!-- <el-button v-if="keyDetail_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button> -->
         </template>
       </el-table-column>
@@ -90,12 +104,12 @@
           <el-form-item label="时间" v-if="isTemp == 1">
                 <el-date-picker
                   v-model="timeRange"
-                  type="daterange"
+                  type="datetimerange"
                   range-separator="至"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
-                  format="yyyy年MM月dd日"
-                  value-format="yyyy-MM-dd">
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  :default-time="['00:00:00', '23:59:59']">
                 </el-date-picker>
           </el-form-item>
         </el-form>
@@ -148,7 +162,7 @@
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelshouquan()" icon="el-icon-close" size="mini">取 消</el-button>
-        <el-button type="primary" @click="shouquan()" icon="el-icon-check" size="mini">授 权</el-button>
+        <el-button type="primary" @click="shouquanbatch()" icon="el-icon-check" size="mini">授 权</el-button>
       </div>
     </el-dialog>
     <!-- 新增弹框 -->
@@ -213,7 +227,7 @@
 </template>
 
 <script>
-import { fetchList, getObj, addObj, putObj, delObj, shouquanByKeyDetail } from '@/api/keycabinet/keyDetail'
+import { fetchList, getObj, addObj, putObj, delObj, shouquanByKeyDetail,shouquanByKeyDetails } from '@/api/keycabinet/keyDetail'
 import * as keyCabinetService from '@/api/keycabinet/keyCabinet'
 import * as userApi from '@/api/user'
 import { mapGetters } from 'vuex'
@@ -227,6 +241,8 @@ export default {
   name: 'table_keyDetail',
   data () {
     return {
+      allKeySelectionRows: [],
+      keySelectionRows: [],
       isTemp: 0,
       timeRange: null,
       userList: null,
@@ -240,8 +256,9 @@ export default {
         limit: 10
       },
       userlistQuery: {
+        subSystem:0,
         page: 1,
-        limit: 10
+        limit: 20
       },      
       form: {
         id: undefined,
@@ -312,6 +329,14 @@ export default {
     this.keyDetail_add = this.hasFunctions(['keyDetail_add'])
     this.keyDetail_upd = this.hasFunctions(['keyDetail_upd'])
     this.keyDetail_del = this.hasFunctions(['keyDetail_del'])
+
+    let param = {}
+    param.page = 1
+    param.limit = 1000
+    keyCabinetService.fetchList(param).then(response => {
+      this.keyCabinetList = response.records
+
+    })
   },
   methods: {
     getList () {
@@ -337,41 +362,41 @@ export default {
     },
     handleuserSizeChange (val) {
       this.userlistQuery.limit = val
-      userApi.fetchList(this.listQuery).then(response => {
+      userApi.fetchList(this.userlistQuery).then(response => {
         this.userList = response.records
         this.userTotal = response.total
       })
     },
     handleuserCurrentChange (val) {
       this.userlistQuery.page = val
-      userApi.fetchList(this.listQuery).then(response => {
+      userApi.fetchList(this.userlistQuery).then(response => {
         this.userList = response.records
         this.userTotal = response.total
       })
     },
     handleCreate () {
-      this.resetTemp()
-      let param = {}
-      param.page = 1
-      param.limit = 1000
-      keyCabinetService.fetchList(param).then(response => {
-        this.keyCabinetList = response.records
-        this.dialogStatus = 'create'
-        this.dialogFormVisible = true
-      })
+      console.log(this.keySelectionRows)
     },
     handleUpdate (row) {
       getObj(row.id).then(response => {
         this.form = response
-        let param = {}
-        param.page = 1
-        param.limit = 1000
-        keyCabinetService.fetchList(param).then(response => {
-          this.keyCabinetList = response.records
-          this.dialogFormVisible = true
-          this.dialogStatus = 'update'
-   
-        })
+        this.dialogFormVisible = true
+        this.dialogStatus = 'update'
+      })
+    },
+    handleShouquanBatch () {
+      if(this.keySelectionRows.length == 0){
+        this.$message({
+          message: '没有选择钥匙',
+          type: 'warning'
+        });
+        return;
+      }
+      this.userlistQuery.isAsc = false
+      userApi.fetchList(this.userlistQuery).then(response => {
+        this.userList = response.records
+        this.userTotal = response.total
+        this.shouquanFormVisible = true
       })
     },
     handleShouquan (row) {
@@ -385,6 +410,41 @@ export default {
         })
         
       })
+    },
+    shouquanbatch () {
+      // let keyDetailCode = this.form.code
+      // let cabinetCode = this.form.keyCabinetCode
+      let users = this.$refs.userTable.selection
+      let param = {}
+      param.isTemp = this.isTemp
+      if(this.isTemp == 1){
+        param.startTime = this.timeRange[0]
+        param.endTime = this.timeRange[1]
+      }
+      // param.keyDetailCode = keyDetailCode
+      // param.cabinetCode = cabinetCode
+      param.userList = users
+      param.keyDetails = this.keySelectionRows
+      shouquanByKeyDetails(param).then(response =>{
+        if(response.result){
+          this.shouquanFormVisible = false
+          this.getList()
+          this.$notify({
+            title: '成功',
+            message: '授权成功',
+            type: 'success',
+            duration: 2000
+          })
+        }else{
+          this.$notify({
+            title: '失败',
+            message: result.errorMessage,
+            type: 'info',
+            duration: 2000
+          })
+        }
+      })
+      
     },
     shouquan () {
       let keyDetailCode = this.form.code
@@ -401,7 +461,23 @@ export default {
       param.userList = users
 
       shouquanByKeyDetail(param).then(response =>{
-        this.shouquanFormVisible = false
+        if(response.result){
+          this.shouquanFormVisible = false
+          this.getList()
+          this.$notify({
+            title: '成功',
+            message: '授权成功',
+            type: 'success',
+            duration: 2000
+          })
+        }else{
+          this.$notify({
+            title: '失败',
+            message: result.errorMessage,
+            type: 'info',
+            duration: 2000
+          })
+        }
       })
       
     },
@@ -490,7 +566,11 @@ export default {
         createTime: undefined,
         updateTime: undefined,
       }
+    },
+    handleKeySelectionChange(rows){
+      this.keySelectionRows = rows;
     }
+
   }
 }
 </script>

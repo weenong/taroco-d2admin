@@ -3,8 +3,20 @@
     <!-- header 查询条件 -->
     <template slot="header">
       <el-form :inline="true" :model="listQuery" size="mini" style="margin-bottom: -18px;">
-        <el-form-item label="查询条件">
-          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="" v-model="listQuery.id" clearable>
+        <el-form-item label="钥匙柜">
+          <el-select v-model="listQuery.cabinetCode" value-key="code" placeholder="请选择" collapse-tags style="width:100%;" clearable>
+            <el-option v-for="item in keyCabinetList" :key="item.code" :label="item.name" :value="item.code" >
+              <span style="float: left">{{ item.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="钥匙">
+          <el-input @keyup.enter.native="handleFilter" style="width: 100px;" placeholder="" v-model="listQuery.keyName" clearable>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="用户">
+          <el-input @keyup.enter.native="handleFilter" style="width: 100px;" placeholder="" v-model="listQuery.userName" clearable>
           </el-input>
         </el-form-item>
         <el-form-item>
@@ -21,39 +33,32 @@
       highlight-current-row
       stripe
       style="width: 100%">
-      <el-table-column align="center" label="序号" width="60">
+      <el-table-column align="center" type="index" label="序号" width="50">
+        
+      </el-table-column>
+      <el-table-column align="center" label="钥匙柜" show-overflow-tooltip>
         <template slot-scope="scope">
-          <span>{{scope.row.id}}</span>
+          <span>{{scope.row.cabinetName}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="钥匙柜" width="100" show-overflow-tooltip>
+      <el-table-column align="center" label="钥匙名称" show-overflow-tooltip>
         <template slot-scope="scope">
-          <span>{{scope.row.keyCabinetCode}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="钥匙名称" width="100" show-overflow-tooltip>
-        <template slot-scope="scope">
-          <span>{{scope.row.name}}</span>
+          <span>{{scope.row.keyName}}</span>
         </template>
       </el-table-column> 
-      <el-table-column align="center" label="领用人" width="100" show-overflow-tooltip >
+      <el-table-column align="center" label="用户" show-overflow-tooltip >
         <template slot-scope="scope">
           <span>{{scope.row.username}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="领用时间" width="200" show-overflow-tooltip>
+      <el-table-column align="center" label="领用时间" show-overflow-tooltip>
         <template slot-scope="scope">
-          <span>{{scope.row.useTime}}</span>
+          <span>{{scope.row.getTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="归还时间" width="200" show-overflow-tooltip>
+      <el-table-column align="center" label="归还时间" show-overflow-tooltip>
         <template slot-scope="scope">
           <span>{{scope.row.backTime}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="详情" width="100">
-        <template slot-scope="scope">
-          <el-button v-if="keyDetail_upd" size="mini" type="primary" icon="el-icon-more"></el-button>
         </template>
       </el-table-column>
 
@@ -68,7 +73,7 @@
 </template>
 
 <script>
-import { fetchList, getObj, addObj, putObj, delObj } from '@/api/keycabinet/keyDetail'
+import {pageList} from '@/api/keycabinet/keyRecord'
 import * as keyCabinetService from '@/api/keycabinet/keyCabinet'
 import * as userService from '@/api/user'
 import { mapGetters } from 'vuex'
@@ -131,20 +136,23 @@ export default {
     this.keyDetail_add = this.hasFunctions(['keyDetail_add'])
     this.keyDetail_upd = this.hasFunctions(['keyDetail_upd'])
     this.keyDetail_del = this.hasFunctions(['keyDetail_del'])
+    let param = {}
+    param.page = 1
+    param.limit = 1000
+    keyCabinetService.fetchList(param).then(response => {
+      this.keyCabinetList = response.records
+
+    })
   },
   methods: {
     getList () {
-      this.list = []
-      let item1 = {}
-      item1.id = 1
-      item1.keyCabinetCode = '1'
-      item1.name = '钥匙1'
-      item1.username = '巡检员1'
-      item1.useTime = '2019-06-24 13:21:00'
-      item1.backTime = '2019-06-24 16:03:21'
-      this.list[0] = item1
-      this.total = 1
-      this.listLoading = false
+      this.listLoading = true
+      this.listQuery.isAsc = false
+      pageList(this.listQuery).then(response => {
+        this.list = response.records
+        this.total = response.total
+        this.listLoading = false
+      })
     },
     handleFilter () {
       this.listQuery.page = 1

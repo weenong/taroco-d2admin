@@ -46,3 +46,11 @@ export function newRecord (keyDetail) {
     method: 'get'
   })
 }
+
+export function pageList (query) {
+  return request({
+    url: basePath + '/keyRecord/webrecord/pagelist',
+    method: 'get',
+    params: query
+  })
+}

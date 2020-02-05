@@ -180,7 +180,7 @@ export default {
   },
   methods: {
     userList(){
-      userList().then(response => {
+      userList('0').then(response => {
         this.userMap = {}
         response.result.forEach((user)=>{
           this.userMap[user.userCode] = user.realName

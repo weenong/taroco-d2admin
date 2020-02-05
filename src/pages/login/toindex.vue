@@ -2,12 +2,6 @@
   <div class="login-page">
     <div class="layer bg" id="login"></div>
     <div class="layer flex-center">
-      <!-- logo部分 -->
-      <!--<div class="logo-group">
-        <i class="iconfont icon-key-wisdom"></i>
-        <img src="./image/logo.png" alt="logo">
-      </div>-->
-      <!-- 表单部分 -->
       <div class="login-bg"></div>
       <img class="login-img" src="./image/login.png">
       <div class="login-logo">
@@ -15,54 +9,13 @@
         <h1>{{title}}</h1>
       </div>
       <div class="form-group">
-        <el-card>
-          <el-form ref="loginForm" label-position="top" :rules="rules" :model="formLogin" size="default">
-            <el-form-item prop="username">
-              <el-input type="text" v-model="formLogin.username" placeholder="用户名">
-                <i slot="prepend" class="iconfont icon-user"></i>
-              </el-input>
-            </el-form-item>
-            <el-form-item prop="password">
-              <el-input type="password" v-model="formLogin.password" placeholder="密码">
-                <i slot="prepend" class="iconfont icon-mima"></i>
-              </el-input>
-            </el-form-item>
-            <el-form-item prop="code">
-              <el-input type="text" v-model="formLogin.code" placeholder="- - - -">
-                <template slot="prepend"><i class="iconfont icon-yanzhengma"></i></template>
-                <template slot="append">
-                  <img class="login-code" src="./image/login-code.png">
-                </template>
-              </el-input>
-            </el-form-item>
-            <el-button-group>
-              <el-button size="default" class="button-login" @click="submit" type="primary">登录</el-button>
-             <!-- <el-button size="default" @click="resetDb">初始化</el-button>-->
-            </el-button-group>
-          </el-form>
-        </el-card>
+        
       </div>
-      <!-- 快速登录按钮 -->
-      <!--<el-button size="default" type="info" class="button-help" @click="dialogVisible = true">
-        快速选择用户（测试权限）
-      </el-button>-->
     </div>
-    <!--<el-dialog title="快速选择用户" :visible.sync="dialogVisible" width="400px">
-      <el-row :gutter="10" style="margin: -20px 0px -10px 0px;">
-        <el-col v-for="(user, index) in users" :key="index" :span="8">
-          <div class="user-btn" @click="handleUserBtnClick(user)">
-            <d2-icon name="user-circle-o" />
-            <span>{{user.name}}</span>
-          </div>
-        </el-col>
-      </el-row>
-    </el-dialog>-->
   </div>
 </template>
 
 <script>
-/* eslint-disable */
-// require("particles.js");
 import config from "./config/default";
 import { mapActions } from "vuex";
 import * as sysService from "@/api/sys/sys";
@@ -111,12 +64,12 @@ export default {
     this.title = process.env.VUE_APP_TITLE
   },
   created () {
-    // console.log(this.$route.query.userid)
-    // this.login({
-    //         vm: this,
-    //         username: this.$route.query.username,
-    //         password: '123456'
-    //       });
+    console.log(this.$route.query.username)
+    this.login({
+            vm: this,
+            username: this.$route.query.username,
+            password: '123456'
+          });
   },
   beforeDestroy() {
     // 销毁 particlesJS

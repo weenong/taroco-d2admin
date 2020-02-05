@@ -107,7 +107,7 @@ let fetchPermissionInfo = async () => {
   await Promise.resolve()
 }
 // 免校验token白名单
-let whiteList = ['/login']
+let whiteList = ['/login', '/toindex']
 
 /**
  * 路由拦截

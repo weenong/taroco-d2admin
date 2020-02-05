@@ -68,3 +68,11 @@ export function shouquanByKeyDetail (obj) {
     data: obj
   })
 }
+
+export function shouquanByKeyDetails (obj) {
+  return request({
+    url: basePath + '/keyDetail/shouquanByKeyDetails',
+    method: 'post',
+    data: obj
+  })
+}

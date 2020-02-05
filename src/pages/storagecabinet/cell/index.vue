@@ -3,9 +3,17 @@
     <!-- header 查询条件 -->
     <template slot="header">
       <el-form :inline="true" :model="listQuery" size="mini" style="margin-bottom: -18px;">
-        <el-form-item label="查询条件">
-          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="" v-model="listQuery.id" clearable>
+        <el-form-item label="物品柜">
+          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="" v-model="listQuery.cabinetName" clearable>
           </el-input>
+          <!-- <el-select v-model="listQuery.cabinetCode" placeholder="">
+            <el-option
+              v-for="item in cabinetList"
+              :key="item.code"
+              :label="item.name"
+              :value="item.code">
+            </el-option>
+          </el-select> -->
         </el-form-item>
         <el-form-item>
           <el-button type="default" @click="handleFilter" icon="el-icon-search">搜 索</el-button>
@@ -24,10 +32,10 @@
       highlight-current-row
       stripe
       style="width: 100%">
-      <el-table-column align="center" label="序号" width="60">
-        <template slot-scope="scope">
+      <el-table-column align="center" type="index" label="序号" width="60">
+        <!-- <template slot-scope="scope">
           <span>{{scope.row.id}}</span>
-        </template>
+        </template> -->
       </el-table-column>
       <el-table-column align="center" label="物品柜" width="100" show-overflow-tooltip="true">
         <template slot-scope="scope">
@@ -67,8 +75,12 @@
       
       <el-table-column align="center" label="操作" width="200">
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleShouquan(scope.row)" icon="el-icon-link"></el-button>
-          <el-button v-if="cabinetCell_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+          <el-tooltip content="授权"> 
+            <el-button size="mini" type="primary" @click="handleShouquan(scope.row)" icon="el-icon-link"></el-button>
+          </el-tooltip>
+          <el-tooltip content="修改"> 
+            <el-button v-if="cabinetCell_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+          </el-tooltip>
           <!-- <el-button v-if="cabinetCell_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button> -->
         </template>
       </el-table-column>
@@ -133,12 +145,12 @@
           <el-form-item label="时间" v-if="isTemp == 1">
                 <el-date-picker
                   v-model="timeRange"
-                  type="daterange"
+                  type="datetimerange"
                   range-separator="至"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
-                  format="yyyy年MM月dd日"
-                  value-format="yyyy-MM-dd">
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  :default-time="['00:00:00', '23:59:59']">
                 </el-date-picker>
           </el-form-item>
         </el-form>
@@ -183,7 +195,7 @@
           @size-change="handleuserSizeChange"
           @current-change="handleuserCurrentChange"
           :current-page.sync="userlistQuery.page"
-          :page-sizes="[10,20,30,50]"
+          :page-sizes="[20,50,100]"
           :page-size="userlistQuery.limit"
           layout="total, sizes, prev, pager, next, jumper"
           :total="userTotal">
@@ -199,6 +211,7 @@
 
 <script>
 import { fetchList, getObj, addObj, putObj, delObj,shouquanByCell } from '@/api/storagecabinet/cabinetCell'
+import { getCabinetList,syncFinger } from '@/api/storagecabinet/storageCabinet'
 import * as userApi from '@/api/user'
 import { mapGetters } from 'vuex'
 import ElRadioGroup from 'element-ui/packages/radio/src/radio-group'
@@ -215,6 +228,7 @@ export default {
       isTemp: 0,
       userList: null,
       userTotal: null,
+      cabinetList: [],
       shouquanFormVisible: null,
       list: null,
       total: null,
@@ -224,8 +238,9 @@ export default {
         limit: 10
       },
       userlistQuery: {
+        subSystem:1,
         page: 1,
-        limit: 10
+        limit: 20
       },      
       form: {
         id: undefined,
@@ -267,6 +282,9 @@ export default {
     this.cabinetCell_add = this.hasFunctions(['cabinetCell_add'])
     this.cabinetCell_upd = this.hasFunctions(['cabinetCell_upd'])
     this.cabinetCell_del = this.hasFunctions(['cabinetCell_del'])
+    getCabinetList().then(response => {
+      this.cabinetList = response.result
+    })
   },
   methods: {
     getList () {
@@ -292,14 +310,14 @@ export default {
     },
     handleuserSizeChange (val) {
       this.userlistQuery.limit = val
-      userApi.fetchList(this.listQuery).then(response => {
+      userApi.fetchList(this.userlistQuery).then(response => {
         this.userList = response.records
         this.userTotal = response.total
       })
     },
     handleuserCurrentChange (val) {
       this.userlistQuery.page = val
-      userApi.fetchList(this.listQuery).then(response => {
+      userApi.fetchList(this.userlistQuery).then(response => {
         this.userList = response.records
         this.userTotal = response.total
       })
@@ -342,9 +360,24 @@ export default {
       param.cabinetCode = cabinetCode
       param.cellCode = cellCode
       param.userList = users
-console.log(param)
       shouquanByCell(param).then(response =>{
-        this.shouquanFormVisible = false
+        if(response.result){
+          this.shouquanFormVisible = false
+          this.getList()
+          this.$notify({
+            title: '成功',
+            message: '授权成功',
+            type: 'success',
+            duration: 2000
+          })
+        }else{
+          this.$notify({
+            title: '失败',
+            message: response.errorMessage,
+            type: 'info',
+            duration: 2000
+          })
+        }
       })
       
     },

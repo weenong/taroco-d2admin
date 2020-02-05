@@ -42,9 +42,10 @@ export function putObj (obj) {
   })
 }
 
-export function userList () {
+export function userList (subSystem) {
+  subSystem = subSystem?subSystem:'0'
   return request({
-    url: '/admin/user/userList',
+    url: '/admin/user/userList/' + subSystem,
     method: 'get'
   })
 }

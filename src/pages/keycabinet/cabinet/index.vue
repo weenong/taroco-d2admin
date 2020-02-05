@@ -3,9 +3,15 @@
     <!-- header 查询条件 -->
     <template slot="header">
       <el-form :inline="true" :model="listQuery" size="mini" style="margin-bottom: -18px;">
-        <el-form-item label="查询条件">
-          <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="" v-model="listQuery.name" clearable>
-          </el-input>
+        <el-form-item label="区域">
+          <!-- <el-input @keyup.enter.native="handleFilter" style="width: 200px;" placeholder="" v-model="listQuery.name" clearable>
+          </el-input> -->
+          <el-select v-model="listQuery.placeCode" value-key="code" placeholder="请选择" collapse-tags style="width:100%;">
+            <el-option v-for="item in placeList" :key="item.code" :label="item.name" :value="item.code" >
+              <span style="float: left">{{ item.name }}</span>
+              <span style="float: right; color: #8492a6; font-size: 13px">{{ item.code }}</span>
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item>
           <el-button type="default" @click="handleFilter" icon="el-icon-search">搜 索</el-button>
@@ -24,33 +30,33 @@
       highlight-current-row
       stripe
       style="width: 100%">
-      <el-table-column align="center" label="序号" width="50">
-        <template slot-scope="scope">
+      <el-table-column align="center" type="index" label="序号" width="50">
+        <!-- <template slot-scope="scope">
           <span>{{scope.row.id}}</span>
-        </template>
+        </template> -->
       </el-table-column>
       <el-table-column align="center" label="编码" width="50">
         <template slot-scope="scope">
           <span>{{scope.row.code}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="名称" width="90">
+      <el-table-column align="center" label="名称" width="90" show-overflow-tooltip=true>
         <template slot-scope="scope">
           <span>{{scope.row.name}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="区域" >
+      <el-table-column align="center" label="区域" width="140" show-overflow-tooltip=true>
         <template slot-scope="scope">
           <span>{{scope.row.placeName}}</span>
         </template>
       </el-table-column>
     
-      <el-table-column align="center" label="备注" width="150" show-overflow-tooltip>
+      <el-table-column align="center" label="备注" width="120" show-overflow-tooltip=true>
         <template slot-scope="scope">
           <span>{{scope.row.memo}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="创建时间" width="130" show-overflow-tooltip>
+      <el-table-column align="center" label="创建时间" width="130" show-overflow-tooltip=true>
         <template slot-scope="scope">
           <span>{{scope.row.createTime|parseTime('{y}-{m}-{d}')}}</span>
         </template>
@@ -58,11 +64,24 @@
       
       <el-table-column align="center" label="操作" >
         <template slot-scope="scope">
-          <el-button size="mini" type="primary" @click="handleShouquan(scope.row)" icon="el-icon-link"></el-button>
-          <el-button size="mini" type="primary" @click="handleDetail(scope.row)" icon="el-icon-view"></el-button>
-          <el-button size="mini" type="primary" @click="handleSync(scope.row)" icon="el-icon-check"></el-button>
-          <el-button v-if="keyCabinet_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
-          <el-button v-if="keyCabinet_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
+          <el-tooltip content="授权">
+            <el-button size="mini" type="primary" @click="handleShouquan(scope.row)" icon="el-icon-link"></el-button>
+          </el-tooltip>
+          <el-tooltip content="详情">
+            <el-button size="mini" type="primary" @click="handleDetail(scope.row)" icon="el-icon-view"></el-button>
+          </el-tooltip>
+          <el-tooltip content="同步用户">
+            <el-button size="mini" type="primary" @click="handleSyncUser(scope.row)" icon="el-icon-user"></el-button>
+          </el-tooltip>
+          <!-- <el-tooltip content="同步指纹">
+            <el-button size="mini" type="primary" @click="handleSync(scope.row)" icon="el-icon-check"></el-button>
+          </el-tooltip> -->
+          <el-tooltip content="修改">
+            <el-button v-if="keyCabinet_upd" size="mini" type="primary" @click="handleUpdate(scope.row)" icon="el-icon-edit"></el-button>
+          </el-tooltip>
+          <el-tooltip content="删除">
+            <el-button v-if="keyCabinet_del" size="mini" type="danger" @click="deletes(scope.row)" icon="el-icon-delete"></el-button>
+          </el-tooltip>
         </template>
       </el-table-column>
 
@@ -105,17 +124,17 @@
                   style="width: 100%">
                   <el-table-column align="center" label="人员" width="120">
                     <template slot-scope="scope">
-                      <span>{{scope.row.userCode}}</span>
+                      <span>{{scope.row.username}}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column align="center" label="操作" width="80">
+                  <el-table-column align="center" label="领用时间" >
                     <template slot-scope="scope">
-                      <span>{{scope.row.oper}}</span>
+                      <span>{{scope.row.getTime}}</span>
                     </template>
                   </el-table-column>
-                  <el-table-column align="center" label="时间" >
+                  <el-table-column align="center" label="归还时间" >
                     <template slot-scope="scope">
-                      <span>{{scope.row.operTime}}</span>
+                      <span>{{scope.row.backTime}}</span>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -191,12 +210,12 @@
           <el-form-item label="时间" v-if="isTemp == 1">
                 <el-date-picker
                   v-model="timeRange"
-                  type="daterange"
+                  type="datetimerange"
                   range-separator="至"
                   start-placeholder="开始日期"
                   end-placeholder="结束日期"
-                  format="yyyy年MM月dd日"
-                  value-format="yyyy-MM-dd">
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  :default-time="['00:00:00', '23:59:59']">
                 </el-date-picker>
           </el-form-item>
         </el-form>
@@ -241,7 +260,7 @@
           @size-change="handleuserSizeChange"
           @current-change="handleuserCurrentChange"
           :current-page.sync="userlistQuery.page"
-          :page-sizes="[10,20,30,50]"
+          :page-sizes="[20,50,100]"
           :page-size="userlistQuery.limit"
           layout="total, sizes, prev, pager, next, jumper"
           :total="userTotal">
@@ -257,7 +276,7 @@
 
 <script>
 import { Loading } from 'element-ui'
-import { fetchList, getObj, addObj, putObj, delObj,shouquanByCabinet ,syncUserFinger} from '@/api/keycabinet/keyCabinet'
+import { fetchList, getObj, addObj, putObj, delObj,shouquanByCabinet ,syncUserFinger,syncUser} from '@/api/keycabinet/keyCabinet'
 import * as keyDetailApi from '@/api/keycabinet/keyDetail'
 import * as userApi from '@/api/user'
 import {newRecord} from '@/api/keycabinet/keyRecord'
@@ -275,7 +294,6 @@ export default {
     return {
       isTemp: 0,
       timeRange: null,
-      userList: null,
       userTotal: null,
       shouquanFormVisible: null,
       placeList: null,
@@ -291,8 +309,9 @@ export default {
         limit: 10
       },
       userlistQuery: {
+        subSystem:0,
         page: 1,
-        limit: 10
+        limit: 20
       },
       form: {
         id: undefined,
@@ -337,6 +356,10 @@ export default {
         update: '编辑',
         create: '新增'
       },
+      operMap: {
+        '00': '取',
+        '01': '还'
+      },
       tableKey: 0
     }
   },
@@ -350,7 +373,9 @@ export default {
     this.keyCabinet_add = this.hasFunctions(['keyCabinet_add'])
     this.keyCabinet_upd = this.hasFunctions(['keyCabinet_upd'])
     this.keyCabinet_del = this.hasFunctions(['keyCabinet_del'])
-    
+    getplaceList().then(response =>{
+      this.placeList = response.result
+    })
   },
   methods: {
     show (key) {
@@ -391,14 +416,14 @@ export default {
     },
     handleuserSizeChange (val) {
       this.userlistQuery.limit = val
-      userApi.fetchList(this.listQuery).then(response => {
+      userApi.fetchList(this.userlistQuery).then(response => {
         this.userList = response.records
         this.userTotal = response.total
       })
     },
     handleuserCurrentChange (val) {
       this.userlistQuery.page = val
-      userApi.fetchList(this.listQuery).then(response => {
+      userApi.fetchList(this.userlistQuery).then(response => {
         this.userList = response.records
         this.userTotal = response.total
       })
@@ -437,16 +462,15 @@ export default {
           loadingInstance.close();
         });
       })
-
-      // let loadingInstance = Loading.service({ fullscreen: true })
-      // keyDetailApi.syncByCabinet(row.code).then(response => {
-      //   this.$notify({title: '成功', message: '同步成功', type: 'success', duration: 2000})
-      //   this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
-      //     loadingInstance.close();
-      //   });
-        
-      // })
-
+    },
+    handleSyncUser (row) {
+      let loadingInstance = Loading.service({ fullscreen: true })
+      syncUser(row.code).then(response=>{
+        this.$notify({title: '成功', message: '同步成功', type: 'success', duration: 2000})
+        this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
+          loadingInstance.close();
+        });
+      })
     },
     handleShouquan (row) {
       getObj(row.id).then(response => {
@@ -474,7 +498,23 @@ export default {
       param.userList = users
 
       shouquanByCabinet(param).then(response =>{
-        this.shouquanFormVisible = false
+        if(response.result){
+          this.shouquanFormVisible = false
+          this.getList()
+          this.$notify({
+            title: '成功',
+            message: '授权成功',
+            type: 'success',
+            duration: 2000
+          })
+        }else{
+          this.$notify({
+            title: '失败',
+            message: result.errorMessage,
+            type: 'info',
+            duration: 2000
+          })
+        }
       })
       
     },

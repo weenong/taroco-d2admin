@@ -2,9 +2,9 @@
   <el-dropdown size="small" class="d2-mr">
     <span class="btn-text">你好 {{info.name}}</span>
     <el-dropdown-menu slot="dropdown">
-      <el-dropdown-item @click.native="logOff">
+      <!-- <el-dropdown-item @click.native="logOff">
         <d2-icon name="power-off" class="d2-mr-5" /> 注销
-      </el-dropdown-item>
+      </el-dropdown-item> -->
       <!-- <el-dropdown-item @click.native="resetDb">
         <i class="el-icon-refresh"></i> 初始化
       </el-dropdown-item> -->

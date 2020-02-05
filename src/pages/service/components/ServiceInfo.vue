@@ -66,7 +66,7 @@ export default {
         method: 'get'
       })
         .then((res) => {
-          this.info = res.data
+          this.info = res
         })
     },
     queryHealth () {
@@ -76,7 +76,7 @@ export default {
         method: 'get'
       })
         .then((res) => {
-          this.health = res.data
+          this.health = res
         })
     }
   }

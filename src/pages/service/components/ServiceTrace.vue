@@ -108,7 +108,7 @@ export default {
         method: 'get'
       })
         .then((res) => {
-          this.traces = res.data.traces
+          this.traces = res.traces
           this.search.path = ''
         })
     }

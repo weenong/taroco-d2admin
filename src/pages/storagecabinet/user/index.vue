@@ -189,16 +189,16 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="系统" prop="label">
-              <el-select v-model="form.label" :disabled="dialogStatus == 'update'" placeholder="请选择" style="width:100%;">
-                <el-option v-for="item in systemOptions" :key="item" :label="item | systemFilter" :value="item"> </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
             <el-form-item label="卡号" prop="cardNo">
               <el-input v-model="form.cardNo" ></el-input>
             </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <!-- <el-form-item label="系统" prop="label">
+              <el-select v-model="form.label" :disabled="dialogStatus == 'update'" placeholder="请选择" style="width:100%;">
+                <el-option v-for="item in systemOptions" :key="item" :label="item | systemFilter" :value="item"> </el-option>
+              </el-select>
+            </el-form-item> -->
           </el-col>
         </el-row>
       </el-form>
@@ -249,7 +249,7 @@ export default {
     ElRadioGroup,
     Loading
   },
-  name: 'table_user',
+  name: 'storage_user',
   data () {
     return {
       cabinetCode: null,
@@ -266,7 +266,8 @@ export default {
       total: null,
       listQuery: {
         page: 1,
-        limit: 10
+        limit: 10,
+        subSystem: 1
       },
       form: {
         userCode: undefined,
@@ -442,6 +443,7 @@ export default {
     create (formName) {
       const set = this.$refs
       this.form.role = this.role
+      this.form.label = 1
       set[formName].validate(valid => {
         if (valid) {
           addObj(this.form).then(() => {
@@ -466,7 +468,7 @@ export default {
     update (formName) {
       const set = this.$refs
       // this.form.role = this.role
-      console.log(this.form)
+      this.form.label = 1
       set[formName].validate(valid => {
         if (valid) {
           this.dialogFormVisible = false

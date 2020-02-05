@@ -48,7 +48,7 @@ export default {
         method: 'get'
       })
         .then((res) => {
-          let data = res.data
+          let data = res
           let rows = []
           for (let i in data) {
             let row = {

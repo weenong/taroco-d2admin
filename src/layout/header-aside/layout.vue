@@ -37,11 +37,11 @@
         <!-- 顶栏右侧 -->
         <div class="d2-header-right" flex-box="0">
           <!-- 如果你只想在开发环境显示这个按钮请添加 v-if="$env === 'development'" -->
-          <d2-header-search @click="handleSearchClick"/>
+          <!-- <d2-header-search @click="handleSearchClick"/>
           <d2-header-error-log/>
-          <d2-header-fullscreen/>
+          <d2-header-fullscreen/> -->
           <d2-header-theme/>
-          <d2-header-size/>
+          <d2-header-size/> 
           <d2-header-user/>
         </div>
       </div>

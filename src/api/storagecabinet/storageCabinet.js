@@ -55,11 +55,11 @@ export function getCabinetList () {
   })
 }
 
-export function syncUser (obj) {
+export function syncFinger (obj) {
   return request({
-    url: basePath + '/user/sync',
+    url: basePath + '/user/syncFinger',
     method: 'post',
-    data: obj 
+    data: obj
   })
 }
 
@@ -70,3 +70,9 @@ export function syncUserFinger (cabinetCode) {
   })
 }
 
+export function syncUser (cabinetCode) {
+  return request({
+    url: basePath + '/storageCabinet/syncUser/' + cabinetCode,
+    method: 'post'
+  })
+}

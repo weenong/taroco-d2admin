@@ -67,7 +67,7 @@
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item :command="['a', scope.row]">详情</el-dropdown-item>
-            <el-dropdown-item v-if="permissions['taroco_admin_set_weight']" :command="['b', scope.row]">设置权重</el-dropdown-item>
+            <el-dropdown-item :command="['b', scope.row]">设置权重</el-dropdown-item>
             <el-dropdown-item :command="['c', scope.row]">Turbine监控</el-dropdown-item>
             <el-dropdown-item :command="['d', scope.row]" divided>标签.或</el-dropdown-item>
             <el-dropdown-item :command="['e', scope.row]">标签.且</el-dropdown-item>
@@ -93,10 +93,11 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['permissions'])
+    // ...mapGetters(['permissions'])
   },
   methods: {
     handleOperate (command) {
+      console.log(command)
       let row = command[1]
       switch (command[0]) {
         case 'a':

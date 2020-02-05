@@ -51,7 +51,7 @@ export default {
         method: 'get'
       })
         .then((res) => {
-          this.envs = res.data
+          this.envs = res
           this.activeProfiles = this.envs.activeProfiles[0]
           this.propertySources = this.envs.propertySources
         })

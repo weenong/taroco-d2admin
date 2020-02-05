@@ -61,3 +61,17 @@ export function syncUserFinger (cabinetCode) {
     method: 'post'
   })
 }
+
+export function syncUser (cabinetCode) {
+  return request({
+    url: basePath + '/keyCabinet/syncUser/' + cabinetCode,
+    method: 'post'
+  })
+}
+
+export function online () {
+  return request({
+    url: basePath + '/keyCabinet/online',
+    method: 'get'
+  })
+}
